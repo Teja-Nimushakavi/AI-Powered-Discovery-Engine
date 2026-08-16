@@ -97,6 +97,8 @@ def generate_synthetic_and_analyze(count: int = Query(default=500, ge=100, le=10
         generator.generate_csv(synth_path, count=count)
         return execute_pipeline(synth_path)
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to generate and analyze synthetic data: {str(e)}")
 
 

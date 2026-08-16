@@ -51,6 +51,10 @@ class SyntheticDataGenerator:
         "Free casino coins click link www.spamlink.com to win money"
     ]
 
+    BRANDS = ["Roadster", "Mango", "HRX", "Biba", "Anouk", "FabIndia", "Zara", "H&M"]
+    ITEMS = ["floral dress", "denim jacket", "silk kurti", "linen shirt", "high-waist jeans", "leather boots", "party blazer", "cotton saree"]
+    SIZES = ["S", "M", "L", "XL", "30", "32", "34"]
+
     AUTHORS = [
         "Priya Sharma", "Ananya Roy", "Rahul Verma", "Neha Gupta",
         "Sneha Patel", "Vikram Singh", "Kavya Reddy", "Rohan Mehta",
