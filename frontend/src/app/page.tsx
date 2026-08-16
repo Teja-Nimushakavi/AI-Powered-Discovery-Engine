@@ -102,7 +102,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0b1326] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f1f5f9] text-slate-900 flex flex-col font-sans">
       {/* Top Navigation */}
       <Header
         dataSource={dataSource}

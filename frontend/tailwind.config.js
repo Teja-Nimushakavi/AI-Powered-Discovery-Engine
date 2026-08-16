@@ -8,23 +8,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        midnight: "#0b1326",
+        porcelain: "#f1f5f9",
         surface: {
-          DEFAULT: "#0b1326",
-          low: "#131b2e",
-          container: "#171f33",
-          high: "#222a3d",
-          highest: "#2d3449",
+          DEFAULT: "#ffffff",
+          low: "#f8fafc",
+          container: "#ffffff",
+          high: "#e2e8f0",
         },
         brand: {
           pink: "#ff3f6c",
           pinkHover: "#e0355c",
-          container: "#ff4f74",
+          container: "#fff1f3",
         },
         accent: {
           emerald: "#10b981",
-          gold: "#fbbf24",
-          blue: "#60a5fa",
+          gold: "#f59e0b",
+          blue: "#3b82f6",
         },
       },
       fontFamily: {
