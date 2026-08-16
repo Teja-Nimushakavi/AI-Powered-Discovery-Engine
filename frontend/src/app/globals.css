@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  body {
+    @apply bg-[#0b1326] text-slate-100 font-inter antialiased min-h-screen selection:bg-[#ff3f6c] selection:text-white;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    @apply font-outfit;
+  }
+}
+
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+}
+
+.glass-panel-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(51, 65, 85, 0.85);
+  border-color: rgba(255, 63, 108, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(255, 63, 108, 0.15);
+}
+
+.glow-primary {
+  box-shadow: 0 0 20px rgba(255, 63, 108, 0.2);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.glow-amber {
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}

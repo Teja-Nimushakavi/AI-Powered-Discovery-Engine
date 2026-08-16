@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Myntra Wishlist Discovery Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#e6ecff",
+                        "on-primary-container": "#5a001c",
+                        "inverse-surface": "#dae2fd",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#001a42",
+                        "on-surface-variant": "#e3bdc0",
+                        "surface-bright": "#31394d",
+                        "on-primary-fixed-variant": "#910031",
+                        "surface-container-highest": "#2d3449",
+                        "secondary": "#adc6ff",
+                        "surface-container-high": "#222a3d",
+                        "surface-container-lowest": "#060e20",
+                        "on-primary-fixed": "#400011",
+                        "background": "#0b1326",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-on-surface": "#283044",
+                        "error-container": "#93000a",
+                        "outline-variant": "#5b4042",
+                        "primary-fixed": "#ffd9dc",
+                        "tertiary-container": "#00a572",
+                        "on-tertiary": "#003824",
+                        "on-surface": "#dae2fd",
+                        "secondary-fixed": "#d8e2ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "surface-tint": "#ffb2ba",
+                        "surface-container-low": "#131b2e",
+                        "surface-variant": "#2d3449",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#ffb2ba",
+                        "outline": "#ab888b",
+                        "secondary-container": "#0566d9",
+                        "primary-container": "#ff4f74",
+                        "on-primary": "#670021",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-container": "#171f33",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#6ffbbe",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "inverse-primary": "#bd0043",
+                        "primary": "#ffb2ba",
+                        "on-tertiary-container": "#00311f",
+                        "on-secondary": "#002e6a",
+                        "tertiary": "#4edea3",
+                        "surface-dim": "#0b1326",
+                        "on-background": "#dae2fd",
+                        "surface": "#0b1326"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xl": "32px",
+                        "gutter": "20px",
+                        "sm": "12px",
+                        "xs": "8px",
+                        "container-max": "1440px",
+                        "lg": "24px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Outfit"],
+                        "headline-md": ["Outfit"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-metric": ["Outfit"],
+                        "headline-lg-mobile": ["Outfit"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "display-metric": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(255, 63, 108, 0.15);
+        }
+        .text-emerald { color: #10b981; }
+        .bg-emerald-tint { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); }
+        .text-gold { color: #d97706; }
+        .bg-gold-tint { background-color: rgba(251, 191, 36, 0.15); border-color: rgba(251, 191, 36, 0.3); }
+        .text-blue { color: #3b82f6; }
+        .bg-blue-tint { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-slate-900 font-body-md antialiased overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 shadow-sm docked full-width top-0 sticky flex justify-between items-center w-full px-xl py-md max-w-container-max mx-auto z-50">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-lg glow-primary">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">Myntra Wishlist Discovery Engine</h1>
+<span class="px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-label-caps text-[10px] uppercase tracking-wider font-bold">AI Discovery Agent v1.0</span>
+</div>
+<p class="font-body-sm text-slate-600 text-sm mt-1">Evidence-based purchase barrier discovery for Product Managers</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-slate-100 rounded-full p-1 border border-slate-200">
+<button class="px-4 py-2 rounded-full bg-white text-slate-900 font-label-sm flex items-center gap-2 shadow-sm border border-slate-200">
+<span>✨</span> Auto-Generate
+                </button>
+<button class="px-4 py-2 rounded-full text-slate-600 hover:text-slate-900 font-label-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-sm">upload_file</span> Upload CSV
+                </button>
+</div>
+<div class="flex items-center gap-3 border-l border-slate-200 pl-6">
+<button class="material-symbols-outlined text-slate-600 hover:text-primary transition-colors cursor-pointer active:scale-95">notifications</button>
+<button class="material-symbols-outlined text-slate-600 hover:text-primary transition-colors cursor-pointer active:scale-95">settings</button>
+<img class="w-8 h-8 rounded-full border-2 border-slate-300 object-cover ml-2" data-alt="A professional headshot of a user in a dark sleek tech environment, soft high-key lighting on the face, minimalist background, highly detailed, photorealistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl6mf3gxn8wL9X6hnTMuyZYmQNjG2-79p8j9EhlOtjjI3D8lgvv4dI5LKEYvewekksFUOxbcKXhIHtKvY3NquKGRQckWJuoBDcd8OzH0AP77-jAt_xwGrDa-g2QEy9TxTD_7vyGUCZGfrwkaPgHUCHjOIDfeyLKQ7JOv_ebVmny7YwEiu5qXC7pZN2uSXn1BsN4MHULrMC936yGWon5Z_jis_inZQY9MLg-_HkHDLCDYXTJ-yVGT_-"/>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-xl py-xl space-y-xl">
+<!-- Metric Banner -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="glass-panel rounded-xl p-lg flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-tint rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 text-slate-600 font-label-sm uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-blue text-sm">chat</span> Total Conversations
+                </div>
+<div class="font-display-metric text-display-metric text-slate-900">10,450</div>
+<div class="w-full h-8 mt-2 opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjAiPjxwYXRoIGQ9Ik0wIDEwIFEyNSAyMCA1MCAxMCBUNzUgMCBUMTAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MGE1ZmEiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==')] bg-cover bg-no-repeat bg-bottom mix-blend-multiply"></div>
+</div>
+<div class="glass-panel rounded-xl p-lg flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-tint rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 text-slate-600 font-label-sm uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-emerald text-sm">shopping_cart</span> Wishlist Signals
+                </div>
+<div class="font-display-metric text-display-metric text-emerald">4,120</div>
+<div class="w-full h-8 mt-2 opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjAiPjxwYXRoIGQ9Ik0wIDE1IEwyMCA1IEw0MCAxMCBMNjAgMiBMODAgOCBMMTAwIDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzEwYjk4MSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+')] bg-cover bg-no-repeat bg-bottom mix-blend-multiply"></div>
+</div>
+<div class="glass-panel rounded-xl p-lg flex flex-col gap-2 relative overflow-hidden group glow-primary">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 text-slate-600 font-label-sm uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-primary text-sm">target</span> Relevance Ratio
+                </div>
+<div class="font-display-metric text-display-metric text-primary">39.4%</div>
+<div class="w-full h-8 mt-2 opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjAiPjxwYXRoIGQ9Ik0wIDEwIFEzMCAwIDUwIDEwIFQxMDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmYjJiYSIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+')] bg-cover bg-no-repeat bg-bottom mix-blend-multiply"></div>
+</div>
+<div class="glass-panel rounded-xl p-lg flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-gold-tint rounded-full blur-2xl opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-2 text-slate-600 font-label-sm uppercase tracking-wider mb-2">
+<span class="material-symbols-outlined text-gold text-sm">lightbulb</span> Opportunities
+                </div>
+<div class="font-display-metric text-display-metric text-gold">5</div>
+<div class="w-full h-8 mt-2 opacity-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMjAiPjxwYXRoIGQ9Ik0wIDE4IEwyNSAxNSBMNTAgMTIgTDc1IDEwIEwxMDAgMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmJiZjI0IiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=')] bg-cover bg-no-repeat bg-bottom mix-blend-multiply"></div>
+</div>
+</section>
+<!-- Executive Summary -->
+<section class="glass-panel rounded-xl p-lg border-l-4 border-l-primary relative overflow-hidden">
+<div class="absolute right-0 top-0 w-64 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none"></div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-primary/10 rounded-full border border-primary/20">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-slate-900 mb-2">Executive Summary</h2>
+<p class="font-body-lg text-body-lg text-slate-600 leading-relaxed max-w-4xl">
+                        Analysis of 10k+ recent user interactions reveals a significant disconnect between wishlisted items and actual conversions. The primary friction point stems from <span class="text-primary font-medium">inconsistent sizing expectations</span> across different sub-brands, leading to high hesitation at the cart level. Secondary barriers involve perceived delivery delays for high-value items. Addressing the fit scale discrepancy presents the highest immediate ROI opportunity.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Two Column Layout -->
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Left Column: Matrix -->
+<div class="w-full lg:w-[420px] flex-shrink-0 flex flex-col gap-4">
+<div class="glass-panel rounded-xl p-lg h-full flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-slate-900">Priority Matrix</h3>
+<button class="material-symbols-outlined text-slate-600 hover:text-primary transition-colors">info</button>
+</div>
+<div class="flex-grow relative border-l border-b border-slate-300 mt-4 ml-6 mb-8 mr-4 aspect-square">
+<!-- Y Axis Label -->
+<div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 text-slate-500 font-label-caps text-label-caps whitespace-nowrap">Friction Impact</div>
+<!-- X Axis Label -->
+<div class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-slate-500 font-label-caps text-label-caps whitespace-nowrap">Conversion Relevance</div>
+<!-- Grid Lines -->
+<div class="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none">
+<div class="border-r border-b border-slate-200"></div>
+<div class="border-b border-slate-200"></div>
+<div class="border-r border-slate-200"></div>
+<div></div>
+</div>
+<!-- Quadrant Labels -->
+<div class="absolute top-2 right-2 text-[10px] text-slate-400 font-bold uppercase">High Priority</div>
+<!-- Nodes -->
+<div class="absolute top-[20%] right-[15%] w-6 h-6 bg-primary/80 rounded-full border-2 border-primary shadow-[0_0_15px_rgba(255,63,108,0.4)] cursor-pointer hover:scale-125 transition-transform z-10 group">
+<div class="absolute hidden group-hover:block -top-10 left-1/2 -translate-x-1/2 bg-white border border-slate-200 px-3 py-1 rounded shadow-lg whitespace-nowrap z-20 font-label-sm text-slate-900">Fit Scale Discrepancy</div>
+</div>
+<div class="absolute top-[45%] right-[40%] w-4 h-4 bg-amber-500/80 rounded-full border border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)] cursor-pointer hover:scale-125 transition-transform z-10"></div>
+<div class="absolute bottom-[30%] left-[25%] w-3 h-3 bg-blue-500/80 rounded-full border border-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.3)] cursor-pointer hover:scale-125 transition-transform z-10"></div>
+<div class="absolute top-[60%] right-[20%] w-5 h-5 bg-amber-500/80 rounded-full border border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)] cursor-pointer hover:scale-125 transition-transform z-10"></div>
+</div>
+</div>
+</div>
+<!-- Right Column: Opportunities -->
+<div class="w-full lg:w-[880px] flex flex-col gap-4">
+<h3 class="font-headline-md text-headline-md text-slate-900 mb-2">Prioritized Opportunities</h3>
+<!-- Card 1 -->
+<div class="glass-panel rounded-xl p-lg border-l-2 border-primary hover:bg-slate-50 transition-colors cursor-pointer relative overflow-hidden group">
+<div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded text-[10px] font-bold uppercase tracking-wider">Tier 1</span>
+<span class="text-slate-600 font-label-sm">OPS Score: <strong class="text-slate-900">48.2</strong></span>
+</div>
+<h4 class="font-headline-md text-headline-md text-slate-900">Resolve Fit Scale Discrepancy Across Brands</h4>
+</div>
+<button class="px-4 py-2 bg-white border border-slate-200 hover:border-primary text-slate-900 rounded-lg font-label-sm transition-colors flex items-center gap-2 shadow-sm">
+                            Explore Evidence <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10">
+<div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+<div class="text-slate-600 font-label-caps text-[10px] mb-2 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> Surface Observation</div>
+<p class="font-body-sm text-sm text-slate-800 line-clamp-3">High cart abandonment for Roadster/Mango combinations despite active wishlisting.</p>
+</div>
+<div class="bg-primary/5 p-4 rounded-lg border border-primary/20">
+<div class="text-primary font-label-caps text-[10px] mb-2 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">warning</span> Underlying Barrier</div>
+<p class="font-body-sm text-sm text-slate-800 line-clamp-3">Users cannot confidently predict size translation between distinct brand fits.</p>
+</div>
+<div class="bg-emerald-tint p-4 rounded-lg border border-emerald/20">
+<div class="text-emerald font-label-caps text-[10px] mb-2 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">check_circle</span> Unmet Need</div>
+<p class="font-body-sm text-sm text-slate-800 line-clamp-3">Require a unified sizing confidence indicator prior to checkout commitment.</p>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel rounded-xl p-lg border-l-2 border-amber-500 hover:bg-slate-50 transition-colors cursor-pointer relative overflow-hidden group opacity-90">
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 bg-amber-100 text-amber-700 border border-amber-200 rounded text-[10px] font-bold uppercase tracking-wider">Tier 2</span>
+<span class="text-slate-600 font-label-sm">OPS Score: <strong class="text-slate-900">32.5</strong></span>
+</div>
+<h4 class="font-headline-md text-headline-md text-slate-900">Clarify Expedited Shipping Thresholds</h4>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 relative z-10 opacity-70">
+<div class="bg-slate-50 p-3 rounded-lg border border-slate-200"><div class="w-full h-2 bg-slate-200 rounded mb-2"></div><div class="w-3/4 h-2 bg-slate-200 rounded"></div></div>
+<div class="bg-slate-50 p-3 rounded-lg border border-slate-200"><div class="w-full h-2 bg-slate-200 rounded mb-2"></div><div class="w-5/6 h-2 bg-slate-200 rounded"></div></div>
+<div class="bg-slate-50 p-3 rounded-lg border border-slate-200"><div class="w-full h-2 bg-slate-200 rounded mb-2"></div><div class="w-2/3 h-2 bg-slate-200 rounded"></div></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-panel rounded-xl p-lg border-l-2 border-blue-500 hover:bg-slate-50 transition-colors cursor-pointer relative overflow-hidden group opacity-75">
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 bg-blue-100 text-blue-700 border border-blue-200 rounded text-[10px] font-bold uppercase tracking-wider">Tier 3</span>
+<span class="text-slate-600 font-label-sm">OPS Score: <strong class="text-slate-900">18.9</strong></span>
+</div>
+<h4 class="font-headline-md text-headline-md text-slate-900">Highlight Return Policy on High-Value Items</h4>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="border-t border-slate-200 w-full py-xl mt-xl max-w-container-max mx-auto px-xl flex justify-between items-center text-slate-500 font-label-sm text-label-sm">
+<p>© 2024 Myntra Product Discovery Engine. Limited to internal strategic use only. Data refreshed every 6 hours.</p>
+<div class="flex gap-6">
+<a class="hover:text-slate-900 transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-slate-900 transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-slate-900 transition-colors" href="#">Internal Feedback</a>
+</div>
+</footer>
+</body></html>

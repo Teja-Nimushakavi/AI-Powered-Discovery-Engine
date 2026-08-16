@@ -1,0 +1,48 @@
+# Python exclusions
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+env/
+venv/
+ENV/
+*.egg-info/
+
+# Next.js & Node.js exclusions
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/out/
+build/
+frontend/build/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database & Generated Data exclusions
+*.sqlite
+*.sqlite3
+*.db
+data/raw/synthetic_fashion_reviews.csv
+data/processed/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE & OS exclusions
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

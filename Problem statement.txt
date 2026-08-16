@@ -1,0 +1,311 @@
+﻿AI-Powered Wishlist Purchase Discovery Engine
+Background
+Myntra has millions of users who browse fashion products and add products to their wishlist. Adding a product to a wishlist represents an explicit expression of interest, but many wishlisted products do not convert into purchases within 30 days.
+The business goal is to increase the percentage of users who purchase at least one item from their wishlist within 30 days of adding it.
+However, the underlying reasons for this conversion gap are unknown.
+The Product Manager should not assume that the problem is price, size, fit, reviews, styling, or any other predefined factor.
+Problem Statement
+Myntra lacks a scalable, evidence-based way to discover and prioritize the underlying customer problems that prevent users from converting wishlisted fashion products into purchases within 30 days.
+User conversations about fashion shopping are distributed across app-store reviews, Reddit, YouTube, social media, product reviews, Q&A discussions, and other public sources. Manually analyzing these conversations is time-consuming and makes it difficult to identify recurring behavioral patterns, distinguish high-impact problems from frequently mentioned but low-impact issues, understand differences across user segments, and connect discovered problems to the wishlist-to-purchase conversion goal.
+Therefore, we need to build an AI-powered Discovery Engine that analyzes large-scale public user feedback and conversations to discover, quantify, validate, and prioritize the problems and unmet needs that may prevent wishlisted products from progressing to purchase.
+Core Discovery Question
+Why do users add fashion products to their wishlist but fail to purchase at least one of those products within 30 days?
+The AI system must discover the answer from evidence rather than starting with a predetermined answer.
+What the AI Agent Must Discover
+The agent should investigate:
+1. Wishlist Motivation
+Why do users add products to their wishlist?
+For example:
+* Genuine purchase intent
+* Bookmarking
+* Comparison
+* Future purchase
+* Waiting for the right occasion
+* Waiting for more information
+* Saving multiple alternatives
+These are hypotheses, not predetermined conclusions.
+2. Purchase Barriers
+What prevents users from progressing from wishlist to purchase?
+Potential barriers may include:
+* Fit or size uncertainty
+* Quality uncertainty
+* Product appearance uncertainty
+* Lack of trustworthy reviews
+* Conflicting reviews
+* Price hesitation
+* Comparison with alternatives
+* Styling uncertainty
+* Occasion uncertainty
+* Social validation
+* Return/exchange concerns
+* Delivery concerns
+* Product availability
+* Decision overload
+* Loss of purchase urgency
+The agent must also discover barriers that are not included in this list.
+3. Information Gaps
+What information do users still need after they have already identified a product they like?
+Identify whether users seek information about:
+* Fit
+* Size
+* Fabric/material
+* Quality
+* Appearance
+* Styling
+* Reviews
+* Real-user photos
+* Alternatives
+* Occasion suitability
+* Return policy
+* Availability
+* Other factors
+4. Decision-Making Behavior
+Understand how users make the final decision between:
+Browse → Like → Wishlist → Evaluate → Compare → Decide → Purchase
+Identify where users get stuck and why.
+5. External Research
+Identify what information users seek outside Myntra before purchasing.
+Examples:
+* Google searches
+* Reddit discussions
+* YouTube reviews
+* Instagram/social content
+* Other fashion platforms
+* Other product reviews
+6. User Segmentation
+Identify meaningful differences in wishlist behavior across user segments.
+For example:
+* High-intent shoppers
+* Exploratory shoppers
+* Comparison shoppers
+* Occasion-driven shoppers
+* Fit-conscious shoppers
+* Price-sensitive shoppers
+* Social-validation seekers
+The AI should discover or validate these segments rather than assuming they exist.
+________________
+
+
+AI Discovery Workflow
+The system should follow this pipeline:
+Collect → Clean → Classify → Extract → Cluster → Quantify → Segment → Prioritize → Generate Insights
+Step 1 — Collect
+Ingest publicly available fashion-shopping conversations from multiple sources.
+Initial MVP sources may include:
+* Google Play reviews
+* Apple App Store reviews
+* Reddit
+* YouTube comments
+* Public fashion communities
+* Product reviews
+* Product Q&A
+* Other publicly available shopping discussions
+The MVP should not attempt to integrate every source initially.
+Start with a manageable dataset and design the architecture so additional sources can be added later.
+Step 2 — Clean
+The AI should identify and remove:
+* Duplicates
+* Spam
+* Advertisements
+* Irrelevant content
+* Empty content
+* Non-shopping conversations
+Original evidence should be preserved.
+Step 3 — Classify Relevance
+Classify each record as:
+* Relevant to wishlist/purchase behavior
+* Relevant to fashion purchase decision
+* Potentially relevant
+* Irrelevant
+The system should explain why a record was considered relevant when necessary.
+Step 4 — Extract Behavioral Signals
+For relevant conversations, identify signals such as:
+* Product interest
+* Wishlist/save behavior
+* Purchase intent
+* Purchase hesitation
+* Delayed purchase
+* Comparison
+* Information seeking
+* Abandoned purchase
+* Post-purchase feedback
+Step 5 — Discover Problems
+Use semantic AI analysis to identify recurring problems and themes.
+Do not force every conversation into predefined categories.
+The system should allow new themes to emerge from the data.
+Each problem should contain:
+* Problem name
+* Problem description
+* User need
+* Trigger
+* Barrier
+* Affected segment
+* Evidence
+* Confidence level
+AI-based thematic analysis should group feedback by meaning rather than simply matching keywords, while retaining transparency around how themes were formed.
+Step 6 — Quantify
+For every discovered problem calculate, where data permits:
+* Number of mentions
+* Percentage of relevant feedback
+* Number of unique users/sources
+* Number of platforms
+* Product categories affected
+* Trend over time
+* Severity
+* Segment distribution
+Never fabricate statistics.
+If evidence is insufficient, explicitly state:
+"Insufficient evidence."
+Step 7 — Identify Root Causes
+Do not stop at:
+"Users complain about size."
+Go deeper.
+Example:
+Surface signal:
+Users mention size frequently.
+↓
+Underlying problem:
+Users are uncertain whether the displayed size information will accurately predict real-world fit.
+↓
+Potential unmet need:
+Users need greater confidence about product fit before committing to purchase.
+The agent should distinguish between:
+Observation → Interpretation → Hypothesis
+so AI-generated assumptions are not presented as facts.
+Step 8 — Segment
+For each important problem identify which users are affected.
+Example:
+Segment
+	Problem
+	Evidence
+	Potential impact
+	First-time fashion shoppers
+	Fit uncertainty
+	High
+	High
+	Frequent shoppers
+	Comparison overload
+	Medium
+	Medium
+	Occasion shoppers
+	Styling uncertainty
+	Medium
+	High
+	These are examples only. Actual segments must come from the evidence.
+Step 9 — Prioritize Opportunities
+Do not rank opportunities only by frequency.
+A high-frequency problem is not automatically the most important problem.
+Score opportunities using:
+Opportunity Priority = Frequency × Impact × Conversion Relevance × Evidence Confidence
+Where:
+* Frequency = how commonly the problem appears
+* Impact = potential severity of the barrier
+* Conversion Relevance = how strongly the problem could prevent wishlist-to-purchase conversion
+* Evidence Confidence = strength and consistency of supporting evidence
+Also consider:
+* User segment importance
+* Trend
+* Strategic relevance
+* Potential effort to address
+This prevents the system from simply selecting the loudest complaint and instead focuses on problems that could matter to the business goal.
+Step 10 — Generate Opportunity Areas
+The final output should identify the highest-potential customer problems.
+For each opportunity provide:
+Opportunity
+Users struggle with ______.
+Affected segment
+Primarily ______ users.
+Evidence
+Supported by ______ pieces of feedback across ______ sources.
+Frequency
+______% of relevant feedback.
+Potential impact
+High / Medium / Low.
+Why it matters
+This may prevent users from progressing from wishlist to purchase because ______.
+Confidence
+High / Medium / Low.
+What needs validation
+______.
+The system should recommend what to investigate next, rather than immediately jumping to a product feature.
+________________
+
+
+Final Discovery Output
+The AI agent should generate a Product Manager-ready report containing:
+1. Executive Summary
+Top discovered opportunities.
+2. Wishlist Behavior
+Why users wishlist products.
+3. Purchase Barriers
+Why wishlisted products do not convert.
+4. Uncertainty Map
+What users remain uncertain about before purchasing.
+5. User Segments
+Different wishlist behaviors and their barriers.
+6. Opportunity Ranking
+Top opportunities ranked by evidence, impact and conversion relevance.
+7. Evidence Explorer
+Source-linked evidence supporting each major insight.
+8. Unexpected Findings
+Important problems that were not part of the initial hypotheses.
+9. Knowledge Gaps
+What the available public data cannot answer.
+10. Recommended Next Research
+What should be validated through:
+* User interviews
+* Surveys
+* Product analytics
+* Funnel analysis
+* Usability testing
+* A/B testing
+________________
+
+
+Important Constraints
+The AI agent must:
+1. Not assume the customer problem beforehand.
+2. Not jump directly to a solution.
+3. Not rely only on sentiment analysis.
+4. Not rely only on keyword matching.
+5. Not prioritize problems purely by frequency.
+6. Not invent statistics or evidence.
+7. Maintain traceability from insight to source evidence.
+8. Separate facts, observations, hypotheses and conclusions.
+9. Identify both common and unexpected problems.
+10. Connect discovered opportunities to the 30-day wishlist-to-purchase goal.
+11. Not recommend monetary incentives such as discounts, coupons, cashback or price reductions as the solution.
+12. Clearly identify limitations caused by public-feedback data and the silent majority who may not post feedback.
+Public feedback alone cannot fully represent all users because many users never leave feedback, so the agent should explicitly identify this limitation and recommend validating important findings against behavioral/product analytics.
+MVP
+The first version should be simple.
+Input
+Upload a CSV containing fashion-shopping reviews/comments.
+AI Agent
+Analyze the dataset automatically.
+Output
+Display:
+* Total feedback analyzed
+* Relevant feedback
+* Top problems
+* Problem frequency
+* Problem severity
+* User segments
+* Evidence
+* Opportunity score
+* Top 3–5 opportunities
+* Knowledge gaps
+* Recommended next research
+Future Version
+Add automated data collection from multiple public sources.
+The architecture should therefore separate:
+Data Collection → AI Analysis → Opportunity Intelligence → Dashboard
+so new data sources can be added without rebuilding the entire system.
+Success Criteria for the Agent
+The agent is successful if a Product Manager can go from:
+Thousands of unstructured user conversations
+to:
+A small number of evidence-backed customer problems
+and finally to:
+Prioritized opportunity areas that can be investigated for their potential to improve wishlist-to-purchase conversion.
+The agent should function as an AI Product Discovery Analyst, not merely as a review summarizer or sentiment-analysis chatbot.

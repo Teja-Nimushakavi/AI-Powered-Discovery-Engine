@@ -1,0 +1,20 @@
+# Core Dependencies
+pandas>=2.0.0
+pydantic>=2.0.0
+numpy>=1.24.0
+
+# Vector Storage & Embeddings
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# REST API Server
+fastapi>=0.100.0
+uvicorn>=0.22.0
+python-multipart>=0.0.6
+
+# PM Dashboard UI
+streamlit>=1.28.0
+
+# Utilities & Testing
+python-dotenv>=1.0.0
+pytest>=7.4.0
