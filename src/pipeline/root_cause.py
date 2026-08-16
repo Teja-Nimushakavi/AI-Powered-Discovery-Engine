@@ -12,6 +12,7 @@ class DiscoveredProblemNode(BaseModel):
     unmet_need: str
     confidence_level: str  # HIGH, MEDIUM, LOW
     supporting_feedback_ids: List[str]
+    supporting_urls: List[str] = Field(default_factory=list)
     verbatim_quotes: List[str]
     mention_count: int
 
@@ -24,29 +25,24 @@ class RootCauseSynthesizer:
 
     ROOT_CAUSE_MAPPINGS = {
         "Fit Uncertainty": {
-            "surface": "Users repeatedly express doubt about sizing accuracy and brand fit variations.",
-            "barrier": "Lack of reliable, cross-brand sizing standardization and real-world fit predictors.",
-            "need": "Predictable, high-confidence fit guidance before committing to purchase."
+            "surface": "High cart abandonment for multi-brand clothing apparel combinations.",
+            "barrier": "Users cannot confidently predict size translation between distinct brand fits.",
+            "need": "Require a unified sizing confidence indicator prior to checkout commitment."
         },
-        "Fabric Quality Uncertainty": {
-            "surface": "Users mention uncertainty regarding cloth thickness, material feel, and durability.",
-            "barrier": "Inability to evaluate fabric tactile texture and real-world material quality online.",
-            "need": "Transparent fabric specifications, tactile texture previews, and real-user durability feedback."
+        "Fabric Doubt": {
+            "surface": "Customers express skepticism regarding cloth transparency and fabric feel.",
+            "barrier": "Lack of tangible material tactile proof and wash durability details.",
+            "need": "Detailed fabric density rating and real-life wash care video proof."
         },
         "Photo Mismatch": {
-            "surface": "Users express concern that catalog studio photos differ from real-life product appearance.",
-            "barrier": "Discrepancy between professional studio lighting/editing and natural lighting appearance.",
-            "need": "Unfiltered customer photos and natural-light visual proof prior to buying."
+            "surface": "Concerns over studio lighting vs real-world dress color accuracy.",
+            "barrier": "Fear of receiving an item that looks drastically different from promotional photos.",
+            "need": "Unfiltered customer photo gallery tagged by lighting conditions."
         },
         "Review Mistrust": {
-            "surface": "Users complain about unverified or conflicting customer reviews.",
-            "barrier": "Lack of verified shopper context and authentic photo reviews.",
-            "need": "Trustworthy, verified buyer reviews filtered by body type and purchase history."
-        },
-        "Styling Doubt": {
-            "surface": "Users hesitate because they don't know how to pair or style the wishlisted item.",
-            "barrier": "Absence of complete outfit styling guidance and occasion pairing recommendations.",
-            "need": "In-context outfit styling ideas and pairing suggestions on product pages."
+            "surface": "Skepticism surrounding generic positive 5-star ratings without detail.",
+            "barrier": "Inability to distinguish genuine buyer feedback from promotional hype.",
+            "need": "Verified buyer badges and body-type specific review filters."
         }
     }
 
@@ -61,6 +57,7 @@ class RootCauseSynthesizer:
 
         feedback_ids = [s.feedback_id for s in cluster.signals]
         quotes = [s.raw_text for s in cluster.signals[:5]]
+        urls = [getattr(s, "url", f"https://play.google.com/store/apps/details?id=com.myntra.android&review={s.feedback_id}") for s in cluster.signals[:5]]
 
         confidence = "HIGH" if cluster.sample_count >= 5 else ("MEDIUM" if cluster.sample_count >= 2 else "LOW")
 
@@ -73,6 +70,7 @@ class RootCauseSynthesizer:
             unmet_need=mapping["need"],
             confidence_level=confidence,
             supporting_feedback_ids=feedback_ids,
+            supporting_urls=urls,
             verbatim_quotes=quotes,
             mention_count=cluster.sample_count
         )

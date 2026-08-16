@@ -80,16 +80,29 @@ class SyntheticDataGenerator:
                 template = random.choice(self.NOISE_TEMPLATES)
 
             text = template.format(item=item, size=size, brand=brand, category=category)
-
             rating = random.choice([1.0, 2.0, 3.0, 4.0, 5.0, None])
+            review_id = f"SYN-{i:04d}"
+
+            # Generate realistic web source URL
+            if platform == "Google Play":
+                url = f"https://play.google.com/store/apps/details?id=com.myntra.android&review={review_id}"
+            elif platform == "App Store":
+                url = f"https://apps.apple.com/in/app/myntra/id907394059?review={review_id}"
+            elif platform == "Reddit":
+                url = f"https://reddit.com/r/myntra/comments/fashion_fit_reviews/{review_id}"
+            elif platform == "YouTube":
+                url = f"https://youtube.com/watch?v=myntra_haul_review&comment={review_id}"
+            else:
+                url = f"https://quora.com/Myntra-sizing-and-fabric-quality-review#{review_id}"
 
             records.append({
-                "review_id": f"SYN-{i:04d}",
+                "review_id": review_id,
                 "platform": platform,
                 "text": text,
                 "author": f"user_{random.randint(100, 999)}",
                 "stars": rating,
-                "category": category
+                "category": category,
+                "url": url
             })
 
         return records

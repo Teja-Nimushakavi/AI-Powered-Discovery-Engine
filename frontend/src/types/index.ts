@@ -7,6 +7,7 @@ export interface DiscoveredProblemNode {
   unmet_need: string;
   confidence_level: string;
   supporting_feedback_ids: string[];
+  supporting_urls?: string[];
   verbatim_quotes: string[];
   mention_count: number;
 }
