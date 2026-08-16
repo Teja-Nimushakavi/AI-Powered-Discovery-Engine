@@ -17,38 +17,51 @@ class SyntheticDataGenerator:
         "I wishlisted this {item} 3 weeks ago but I am terrified to order because size {size} fits completely differently in {brand} compared to Myntra's standard sizing. Need accurate brand fit guidance!",
         "Saved this beautiful {item} in my wishlist for Diwali. Is size {size} true to size? Sizes are super inconsistent across brands and size exchange takes forever.",
         "Wishlist is full of {category} but I'm confused if size {size} will be too tight on shoulders or loose on waist. Size chart is useless.",
-        "Kept this {item} in my saved list for a month. Wish they had a fit predictor tool because brand sizing varies so much."
+        "Kept this {item} in my saved list for a month. Wish they had a fit predictor tool because {brand} sizing varies so much.",
+        "Size {size} in {brand} usually fits me, but the comments for this {item} say it runs 2 sizes small. Scared to buy!",
+        "I want to buy this {item} for my sister, but size conversion between {brand} and other labels is so confusing. Still in wishlist.",
+        "Shoulder measurements for size {size} aren't specified anywhere on the product page for this {item}. Holding off purchase.",
+        "I've been staring at this {item} in my wishlist for days. Size {size} might be too tight around hips. Need customer fit ratings!"
     ]
 
     FABRIC_TEMPLATES = [
-        "Love the {item} in my saved items, but the description doesn't state if it's 100% pure cotton or thin polyester that shrinks after washing.",
-        "Added this {item} to wishlist last week. Scared to buy because cheap fabric looks thin and see-through in customer comments.",
-        "Is the material of this {item} heavy or lightweight? Need fabric feel details before ordering from my wishlist.",
-        "Wishlisted this {category} piece. Hope the material quality doesn't fade or bobble after 2 washes."
+        "Love the {item} in my saved items, but the product details don't mention fabric weight. Is it thick cotton or cheap see-through polyester?",
+        "Added this {item} by {brand} to wishlist last week. Scared to buy because some buyers claim the material bleeds color on the first wash.",
+        "Is the material of this {item} heavy or lightweight? Need fabric feel details and transparency rating before ordering from my wishlist.",
+        "Wishlisted this {category} piece. Really hope the cloth texture doesn't get rough or bobble after 2 machine washes.",
+        "The fabric description says 'cotton blend' for this {item}, but what is the exact blend percentage? Don't want itchy synthetic fabric.",
+        "Kept this {item} in my saved items. Reviews mention the cloth is extremely thin and requires a separate inner lining.",
+        "I love the design of this {item}, but is the silk material stiff or soft flowing? Need real material feedback!",
+        "Saved this {brand} {item}. Hoping the fabric doesn't shrink by 2 inches after washing like my previous purchase did."
     ]
 
     PHOTO_TEMPLATES = [
         "The {item} looks gorgeous in studio photos, but there are zero customer photo reviews. Studio lighting is misleading!",
         "Saved this {item} in wishlist. Wish real shoppers posted unedited natural lighting photos so I can see true colors.",
-        "Is the color of this {item} as bright as shown in the picture? Scared the actual product will look dull."
+        "Is the color of this {item} as bright as shown in the catalog picture? Scared the actual product will look dull and washed out.",
+        "The red shade of this {item} by {brand} looks different in every thumbnail. Need customer photo uploads before buying.",
+        "Catalog picture shows high shine on this {item}, but buyer comments say it's matte finish. Need real daylight photos!"
     ]
 
     STYLING_TEMPLATES = [
-        "Wishlisted 3 {category} tops but I have no idea how to style them or what pants pair well with them.",
+        "Wishlisted 3 {category} tops from {brand} but I have no idea how to style them or what pants pair well with them.",
         "Cute {item} in wishlist, but I need outfit styling ideas for a wedding event. Wish product page had pairing suggestions.",
-        "Kept this {item} saved for vacation. Needs matching accessories and styling recommendations."
+        "Kept this {item} saved for vacation. Needs matching accessories and footwear pairing recommendations on the PDP.",
+        "I want to wear this {item} to an evening party but don't know if it goes better with heels or flats. Need styling tips!"
     ]
 
     REVIEW_MISTRUST_TEMPLATES = [
         "Conflicting reviews on this {item} in my wishlist. Some say fit is good, others say quality is horrible. Need verified buyer photos!",
-        "No photo reviews available for this {item} saved in my list. Hard to trust 5-star ratings without real photos."
+        "No photo reviews available for this {item} saved in my list. Hard to trust 5-star ratings without real photos.",
+        "All the 5-star reviews for this {item} sound generic and sponsored. Where are the authentic long-term buyer reviews?",
+        "Only 2 reviews for this {item} by {brand}. I need a larger sample of real buyer feedback before checkout."
     ]
 
     NOISE_TEMPLATES = [
-        "Great app UI and fast delivery service!",
-        "App crashed during checkout, customer service is slow.",
-        "Good experience overall, easy returns.",
-        "Free casino coins click link www.spamlink.com to win money"
+        "Great app UI and fast delivery service by Myntra!",
+        "App crashed during checkout, customer service response is slow.",
+        "Good experience overall, easy return pickup process.",
+        "Delivery executive was polite and reached on time."
     ]
 
     BRANDS = ["Roadster", "Mango", "HRX", "Biba", "Anouk", "FabIndia", "Zara", "H&M"]
