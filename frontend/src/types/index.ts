@@ -8,6 +8,8 @@ export interface DiscoveredProblemNode {
   confidence_level: string;
   supporting_feedback_ids: string[];
   supporting_urls?: string[];
+  supporting_authors?: string[];
+  supporting_timestamps?: string[];
   verbatim_quotes: string[];
   mention_count: number;
 }

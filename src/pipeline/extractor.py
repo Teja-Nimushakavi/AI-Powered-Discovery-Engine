@@ -8,6 +8,8 @@ class ExtractedSignal(BaseModel):
     raw_text: str
     source_platform: str
     url: Optional[str] = Field(default=None)
+    author_id: Optional[str] = Field(default=None)
+    timestamp: Optional[str] = Field(default=None)
     wishlist_motivation: Optional[str] = Field(default="Unspecified Intent")
     purchase_barrier: Optional[str] = Field(default="Uncertainty / General Friction")
     information_gap: Optional[str] = Field(default="General Information Need")
@@ -76,6 +78,8 @@ class SignalExtractor:
             raw_text=record.raw_text,
             source_platform=record.source_platform,
             url=getattr(record, "url", None),
+            author_id=getattr(record, "author_id", "Anonymous Reviewer"),
+            timestamp=getattr(record, "timestamp", "Recent"),
             wishlist_motivation=motivation,
             purchase_barrier=barrier,
             information_gap=info_gap,

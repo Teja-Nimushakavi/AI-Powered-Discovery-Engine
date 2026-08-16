@@ -13,6 +13,8 @@ class DiscoveredProblemNode(BaseModel):
     confidence_level: str  # HIGH, MEDIUM, LOW
     supporting_feedback_ids: List[str]
     supporting_urls: List[str] = Field(default_factory=list)
+    supporting_authors: List[str] = Field(default_factory=list)
+    supporting_timestamps: List[str] = Field(default_factory=list)
     verbatim_quotes: List[str]
     mention_count: int
 
@@ -58,6 +60,8 @@ class RootCauseSynthesizer:
         feedback_ids = [s.feedback_id for s in cluster.signals]
         quotes = [s.raw_text for s in cluster.signals[:5]]
         urls = [getattr(s, "url", f"https://play.google.com/store/apps/details?id=com.myntra.android&review={s.feedback_id}") for s in cluster.signals[:5]]
+        authors = [getattr(s, "author_id", "Anonymous Reviewer") for s in cluster.signals[:5]]
+        timestamps = [getattr(s, "timestamp", "2026-08-14") for s in cluster.signals[:5]]
 
         confidence = "HIGH" if cluster.sample_count >= 5 else ("MEDIUM" if cluster.sample_count >= 2 else "LOW")
 
@@ -71,6 +75,8 @@ class RootCauseSynthesizer:
             confidence_level=confidence,
             supporting_feedback_ids=feedback_ids,
             supporting_urls=urls,
+            supporting_authors=authors,
+            supporting_timestamps=timestamps,
             verbatim_quotes=quotes,
             mention_count=cluster.sample_count
         )

@@ -51,9 +51,19 @@ class SyntheticDataGenerator:
         "Free casino coins click link www.spamlink.com to win money"
     ]
 
-    BRANDS = ["Roadster", "Mango", "HRX", "Biba", "Anouk", "FabIndia", "Zara", "H&M"]
-    ITEMS = ["floral dress", "denim jacket", "silk kurti", "linen shirt", "high-waist jeans", "leather boots", "party blazer", "cotton saree"]
-    SIZES = ["S", "M", "L", "XL", "30", "32", "34"]
+    AUTHORS = [
+        "Priya Sharma", "Ananya Roy", "Rahul Verma", "Neha Gupta",
+        "Sneha Patel", "Vikram Singh", "Kavya Reddy", "Rohan Mehta",
+        "Meera Joshi", "Aarav Kumar", "Tanvi Deshmukh", "Divya Nair",
+        "Pooja Saxena", "Aditya Malhotra", "Ishita Agarwal"
+    ]
+
+    DATES = [
+        "2026-08-15 14:30", "2026-08-14 18:45", "2026-08-13 11:20",
+        "2026-08-12 09:15", "2026-08-11 20:05", "2026-08-10 16:40",
+        "2026-08-09 13:50", "2026-08-08 17:10", "2026-08-07 10:25",
+        "2026-08-06 21:15", "2026-08-05 15:00", "2026-08-04 12:35"
+    ]
 
     def generate_records(self, count: int = 500) -> List[Dict[str, Any]]:
         records = []
@@ -63,6 +73,8 @@ class SyntheticDataGenerator:
             item = random.choice(self.ITEMS)
             size = random.choice(self.SIZES)
             platform = random.choice(self.PLATFORMS)
+            author = random.choice(self.AUTHORS)
+            date_str = random.choice(self.DATES)
 
             # Pick template pool
             rand_val = random.random()
@@ -83,7 +95,7 @@ class SyntheticDataGenerator:
             rating = random.choice([1.0, 2.0, 3.0, 4.0, 5.0, None])
             review_id = f"SYN-{i:04d}"
 
-            # Generate realistic web source URL
+            # Generate unique realistic web source URL for each review
             if platform == "Google Play":
                 url = f"https://play.google.com/store/apps/details?id=com.myntra.android&review={review_id}"
             elif platform == "App Store":
@@ -99,7 +111,8 @@ class SyntheticDataGenerator:
                 "review_id": review_id,
                 "platform": platform,
                 "text": text,
-                "author": f"user_{random.randint(100, 999)}",
+                "author": author,
+                "timestamp": date_str,
                 "stars": rating,
                 "category": category,
                 "url": url
