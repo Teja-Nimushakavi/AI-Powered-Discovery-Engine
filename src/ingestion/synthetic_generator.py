@@ -10,7 +10,16 @@ class SyntheticDataGenerator:
     for testing the Discovery Engine when no external CSV data is uploaded.
     """
 
-    PLATFORMS = ["play_store", "app_store", "reddit", "youtube", "custom_csv", "qna_discussion"]
+    PLATFORMS = [
+        "app_store",
+        "play_store",
+        "reddit",
+        "fashion_community",
+        "social_media",
+        "youtube",
+        "product_qna",
+        "public_fashion_web"
+    ]
     CATEGORIES = ["dresses", "ethnic", "bottomwear", "topwear", "outerwear", "footwear", "accessories"]
 
     FIT_TEMPLATES = [
@@ -112,15 +121,21 @@ class SyntheticDataGenerator:
             rating = random.choice([1.0, 2.0, 3.0, 4.0, 5.0, None])
             review_id = f"SYN-{i:04d}"
 
-            # Generate unique realistic web source URL for each review
-            if platform == "Google Play":
+            # Generate unique realistic web source URL for each platform
+            if platform == "play_store":
                 url = f"https://play.google.com/store/apps/details?id=com.myntra.android&review={review_id}"
-            elif platform == "App Store":
+            elif platform == "app_store":
                 url = f"https://apps.apple.com/in/app/myntra/id907394059?review={review_id}"
-            elif platform == "Reddit":
+            elif platform == "reddit":
                 url = f"https://reddit.com/r/myntra/comments/fashion_fit_reviews/{review_id}"
-            elif platform == "YouTube":
+            elif platform == "fashion_community":
+                url = f"https://fashiontalks.in/community/discussions/{review_id}"
+            elif platform == "social_media":
+                url = f"https://instagram.com/p/myntra_fashion_haul_comment#{review_id}"
+            elif platform == "youtube":
                 url = f"https://youtube.com/watch?v=myntra_haul_review&comment={review_id}"
+            elif platform == "product_qna":
+                url = f"https://myntra.com/product/qna/discussion#{review_id}"
             else:
                 url = f"https://quora.com/Myntra-sizing-and-fabric-quality-review#{review_id}"
 

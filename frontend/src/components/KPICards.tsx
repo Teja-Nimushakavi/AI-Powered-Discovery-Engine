@@ -22,6 +22,9 @@ export const KPICards: React.FC<KPICardsProps> = ({ report }) => {
           <h3 className="font-outfit text-4xl font-extrabold text-slate-900 tracking-tight">
             {report.total_feedback_analyzed.toLocaleString()}
           </h3>
+          <p className="text-[10px] text-slate-500 mt-1 font-medium leading-tight">
+            From App Store, Play Store, Reddit, YouTube, Social Media, Fashion Communities & Q&A
+          </p>
         </div>
         {/* Soft Blue Wave Sparkline */}
         <div className="mt-3 opacity-60">

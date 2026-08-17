@@ -183,15 +183,16 @@ The final output is a PM-Ready Discovery Report structured into 10 key sections:
 ├───────────────────────────────────┼─────────────────────────────────────────────┤
 │ • Ingestion Engine & Auto-Gen:    │ • Primary Stack: Next.js 14 (App Router)    │
 │   - CSV Dataset Upload Parser     │   - React 18 + TypeScript                   │
-│   - Synthetic Data Auto-Generator │   - Tailwind CSS Glassmorphism Design       │
-│     (100 - 1,000 feedback items)  │   - Framer Motion Micro-Animations          │
-│ • AI Processing Pipeline:         │   - Recharts Priority Matrix Scatter Plot   │
-│   - PII Scrubbing & Deduplication │   - Slide-over Verbatim Evidence Drawer     │
-│   - 4-Tier Relevance Classifier   │ • Alternative Stack: Streamlit UI           │
-│   - Vector Embedding & Clustering │   - Python-native analytics dashboard       │
-│   - LLM Root Cause Synthesizer    │ • REST API Middleware:                      │
-│ • Intelligence & Guardrail Engine:│   - FastAPI server (`src/api/main.py`)      │
-│   - Opportunity Priority Scoring  │   - CORS enabled, streaming API endpoints   │
+│   - Multi-Source Auto-Generator   │   - Tailwind CSS Porcelain Light Design     │
+│     (App Store, Play Store,       │   - Framer Motion Micro-Animations          │
+│      Reddit, Fashion Communities, │   - Recharts Priority Matrix Scatter Plot   │
+│      Social Media, YouTube, Q&A,  │   - Slide-over Verbatim Evidence Drawer     │
+│      & Public Fashion Web)        │ • Alternative Stack: Streamlit UI           │
+│   - 4-Tier Relevance Classifier   │   - Python-native analytics dashboard       │
+│   - Vector Embedding & Clustering │ • REST API Middleware:                      │
+│   - LLM Root Cause Synthesizer    │   - FastAPI server (`src/api/main.py`)      │
+│ • Intelligence & Guardrail Engine:│   - CORS enabled, streaming API endpoints   │
+│   - Opportunity Priority Scoring  │                                             │
 │   - Anti-Discount & Traceability  │                                             │
 └───────────────────────────────────┴─────────────────────────────────────────────┘
 ```

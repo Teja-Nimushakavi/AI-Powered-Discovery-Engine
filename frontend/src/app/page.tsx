@@ -147,10 +147,10 @@ export default function DashboardPage() {
           <div className="space-y-6 animate-fadeIn">
             {/* Auto-Generate Mode Alert Banner */}
             {dataSource === "synthetic" && (
-              <div className="bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 rounded-xl flex items-center gap-2 text-xs text-rose-300">
+              <div className="bg-rose-50 border border-rose-200 px-4 py-2.5 rounded-xl flex items-center gap-2 text-xs text-slate-800 font-medium shadow-sm">
                 <Sparkles className="h-4 w-4 text-[#ff3f6c] shrink-0" />
                 <span>
-                  <b>Auto-Generated Data Mode Active:</b> Pipeline auto-generated <b>{report.total_feedback_analyzed}</b> public fashion review conversations simulating App Store, Google Play, Reddit, YouTube, and fashion Q&A forums.
+                  <b>Multi-Source Public Data Mode Active:</b> Auto-generated <b>{report.total_feedback_analyzed}</b> public fashion conversations across <b>App Store reviews</b>, <b>Play Store reviews</b>, <b>Reddit discussions</b>, <b>Fashion & shopping communities</b>, <b>Social media conversations</b>, <b>YouTube comments</b>, <b>Product reviews & Q&A</b>, and <b>public online fashion web discussions</b>.
                 </span>
               </div>
             )}

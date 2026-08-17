@@ -28,8 +28,11 @@ class InputFeedbackRecord(BaseModel):
     @field_validator("source_platform")
     @classmethod
     def validate_source_platform(cls, v: str) -> str:
-        allowed = {"play_store", "app_store", "reddit", "youtube", "custom_csv", "qna_discussion", "social_media"}
-        v_lower = v.lower().strip()
+        allowed = {
+            "app_store", "play_store", "reddit", "fashion_community",
+            "social_media", "youtube", "product_qna", "public_fashion_web", "custom_csv"
+        }
+        v_lower = v.lower().strip().replace(" ", "_")
         if v_lower not in allowed:
-            return "custom_csv"
+            return "public_fashion_web"
         return v_lower
