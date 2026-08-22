@@ -127,10 +127,10 @@ Collect ──► Clean ──► Classify ──► Extract ──► Cluster �
 
 | Step | Stage | Action & Methodology |
 | :--- | :--- | :--- |
-| **Step 1** | **Collect** | Ingest public fashion conversations (Google Play, App Store, Reddit, YouTube, Forums, Q&A). In MVP, ingest via CSV upload / synthetic generator. |
-| **Step 2** | **Clean** | Remove duplicates, spam, ads, empty text, non-shopping noise, while preserving original raw evidence. |
-| **Step 3** | **Classify** | Categorize relevance (Wishlist/Purchase relevant, Fashion decision relevant, Potentially relevant, Irrelevant) with explicit AI reasoning. |
-| **Step 4** | **Extract** | Extract granular behavioral signals (Product interest, wishlist action, purchase intent, hesitation, info-seeking, abandoned purchase). |
+| **Step 1** | **Collect** | Ingest public fashion conversations (Google Play, App Store, Reddit, YouTube, Forums, Q&A). In MVP, ingest via CSV upload / Live Multi-Source Scraper. |
+| **Step 2** | **Clean** | Scrub PII, fix encoding/spelling, deduplicate records, and filter out non-English feedback. |
+| **Step 3** | **Categorize** | Discard noise (e.g. "Great app!", "Delivery was late"). Isolate feedback relevant to *fashion discovery, styling, sizing, and wishlist decisions*. |
+| **Step 4** | **Extract** | Pull granular signals (e.g. "Images are too bright", "Can't tell the fabric texture", "Is this suitable for a wedding?"). |
 | **Step 5** | **Discover Problems** | Semantic AI clustering to identify emerging themes without forcing into predefined taxonomy. Each problem tracks: Name, Description, User Need, Trigger, Barrier, Segment, Evidence, Confidence Level. |
 | **Step 6** | **Quantify** | Compute metrics: mention count, % of relevant feedback, unique users/sources, platforms, affected categories, trend, severity. Explicitly mark *"Insufficient evidence"* where data is sparse. |
 | **Step 7** | **Identify Root Causes** | Move beyond surface complaints. Distinguish between **Observation** $\rightarrow$ **Interpretation** $\rightarrow$ **Hypothesis**. (e.g., Surface: "Mentions size" $\rightarrow$ Root: "Uncertainty if displayed measurements predict real fit" $\rightarrow$ Unmet Need: "Higher fit confidence before buying"). |

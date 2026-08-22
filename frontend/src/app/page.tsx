@@ -19,7 +19,7 @@ import { Sparkles, AlertCircle } from "lucide-react";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function DashboardPage() {
-  const [dataSource, setDataSource] = useState<"synthetic" | "custom">("synthetic");
+  const [dataSource, setDataSource] = useState<"live_fetch" | "custom">("live_fetch");
   const [sampleCount, setSampleCount] = useState<number>(500);
   const [selectedSource, setSelectedSource] = useState<string>("all");
   const [report, setReport] = useState<PMDiscoveryReport | null>(null);
@@ -30,11 +30,11 @@ export default function DashboardPage() {
   const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSyntheticReport = async (count: number = sampleCount, source: string = selectedSource) => {
+  const fetchLiveReport = async (count: number = sampleCount) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/generate-synthetic?count=${count}&source=${source}`, {
+      const res = await fetch(`${API_BASE}/api/fetch-live-reviews?count=${count}`, {
         method: "POST",
       });
 
@@ -148,7 +148,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    fetchSyntheticReport(500);
+    fetchLiveReport(500);
   }, []);
 
   return (
@@ -161,7 +161,7 @@ export default function DashboardPage() {
         setSampleCount={setSampleCount}
         selectedSource={selectedSource}
         setSelectedSource={setSelectedSource}
-        onGenerate={() => fetchSyntheticReport(sampleCount, selectedSource)}
+        onGenerate={() => fetchLiveReport(sampleCount)}
         onFileUpload={handleFileUpload}
         onDownloadPdf={handleDownloadPdf}
         loading={loading}
@@ -188,7 +188,7 @@ export default function DashboardPage() {
               <span>{error}</span>
             </div>
             <button
-              onClick={() => fetchSyntheticReport(sampleCount, selectedSource)}
+              onClick={() => fetchLiveReport(sampleCount)}
               className="px-3 py-1 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors"
             >
               Retry Connection
@@ -199,12 +199,12 @@ export default function DashboardPage() {
         {/* Render Dashboard */}
         {!loading && report && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Auto-Generate Mode Alert Banner */}
-            {dataSource === "synthetic" && (
+            {/* Live Data Mode Alert Banner */}
+            {dataSource === "live_fetch" && (
               <div className="bg-rose-50 border border-rose-200 px-4 py-2.5 rounded-xl flex items-center gap-2 text-xs text-slate-800 font-medium shadow-sm">
                 <Sparkles className="h-4 w-4 text-[#ff3f6c] shrink-0" />
                 <span>
-                  <b>Multi-Source Public Data Mode Active:</b> Auto-generated <b>{report.total_feedback_analyzed}</b> public fashion conversations across <b>App Store reviews</b>, <b>Play Store reviews</b>, <b>Reddit discussions</b>, <b>Fashion & shopping communities</b>, <b>Social media conversations</b>, <b>YouTube comments</b>, <b>Product reviews & Q&A</b>, and <b>public online fashion web discussions</b>.
+                  <b>Live Public Data Mode Active:</b> Successfully scraped <b>{report.total_feedback_analyzed}</b> authentic, real-world customer reviews directly from the <b>Google Play Store</b>.
                 </span>
               </div>
             )}

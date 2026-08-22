@@ -22,8 +22,8 @@ flowchart TB
     subgraph L1["1. Data Ingestion & Storage Layer"]
         direction TB
         CSV[CSV Dataset Upload] --> CSV_Parser[CSV Parser & Encoding Normalizer]
-        SYN[Demographic Synthetic Data Auto-Generator] --> CSV_Parser
-        APIs[Future API Streams: Play Store, Reddit, YouTube] -.-> API_Parser[API Connector Module]
+        LIVE[Live App Store & Play Store Scraper] --> CSV_Parser
+        APIs[Future API Streams: Reddit, YouTube] -.-> API_Parser[API Connector Module]
         CSV_Parser --> SchemaVal[Input Schema Validator - age_group, city_tier, issue_freq]
         API_Parser --> SchemaVal
         SchemaVal --> UUID_Gen[UUID & Metadata Generator]
@@ -237,8 +237,8 @@ sequenceDiagram
     participant Layer3 as Opportunity Intelligence Engine
     participant DB as Knowledge Store
 
-    PM->>UI: Upload CSV Dataset / Generate Synthetic
-    UI->>Layer1: POST /api/generate-synthetic or POST /api/analyze-csv
+    PM->>UI: Upload CSV Dataset / Fetch Live Reviews
+    UI->>Layer1: POST /api/fetch-live-reviews or POST /api/analyze-csv
     Layer1->>Layer1: Parse CSV, Validate Schemas & Generate UUIDs + Demographics
     Layer1->>DB: Save Raw Records (Raw Feedback Store)
     Layer1->>Layer2: Trigger Analysis Job
@@ -411,8 +411,8 @@ graduation-project/
 │   ├── raw/                      # Raw uploaded CSV files
 │   └── processed/                # Normalized & scrubbed datasets
 ├── src/
-│   ├── ingestion/                # CSV Parsers, Synthetic Generators & Validators
-│   │   ├── synthetic_generator.py
+│   ├── ingestion/                # CSV Parsers, Live Scrapers & Validators
+│   │   ├── live_scraper.py
 │   │   ├── csv_parser.py
 │   │   └── schema_validator.py
 │   ├── pipeline/                 # Core AI Processing Pipeline

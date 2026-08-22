@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 
 from src.ingestion.csv_parser import CSVParser
-from src.ingestion.synthetic_generator import SyntheticDataGenerator
+from src.ingestion.live_scraper import LiveReviewScraper
 from src.pipeline.cleaner import DataCleaner
 from src.pipeline.classifier import RelevanceClassifier
 from src.pipeline.extractor import SignalExtractor
@@ -27,7 +27,7 @@ st.markdown("""
     .main-header { font-size: 2.2rem; font-weight: 700; color: #ff3f6c; margin-bottom: 0.5rem; }
     .sub-header { font-size: 1.1rem; color: #535766; margin-bottom: 1.5rem; }
     .metric-card { background: #f5f5f6; padding: 1rem; border-radius: 8px; border-left: 4px solid #ff3f6c; }
-    .synthetic-banner { background: #fff0f3; padding: 0.8rem 1.2rem; border-radius: 8px; border: 1px solid #ff3f6c; color: #d32f2f; margin-bottom: 1rem; }
+    .live-banner { background: #fff0f3; padding: 0.8rem 1.2rem; border-radius: 8px; border: 1px solid #ff3f6c; color: #d32f2f; margin-bottom: 1rem; }
     .persona-card { background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; margin-bottom: 1rem; }
     </style>
 """, unsafe_allow_html=True)
@@ -88,28 +88,28 @@ def main():
     
     data_option = st.sidebar.radio(
         "Select Data Source:",
-        ["✨ Auto-Generate Synthetic Dataset", "📁 Upload Custom CSV File"],
+        ["✨ Fetch Live Play Store Reviews", "📁 Upload Custom CSV File"],
         index=0
     )
 
     sample_size = 500
     target_input = None
-    is_synthetic = False
+    is_live_fetch = False
 
-    if data_option == "✨ Auto-Generate Synthetic Dataset":
-        is_synthetic = True
-        sample_size = st.sidebar.slider("Number of Feedback Conversations to Generate:", min_value=100, max_value=1000, value=500, step=100)
-        gen_button = st.sidebar.button("🔄 Regenerate Synthetic Data", use_container_width=True)
+    if data_option == "✨ Fetch Live Play Store Reviews":
+        is_live_fetch = True
+        sample_size = st.sidebar.slider("Number of Live Reviews to Fetch:", min_value=100, max_value=1000, value=500, step=100)
+        gen_button = st.sidebar.button("🔄 Fetch Latest Reviews", use_container_width=True)
         
         raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
-        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
+        live_path = os.path.join(os.path.dirname(raw_db_path), "live_playstore_reviews.csv")
         
-        if gen_button or not os.path.exists(synth_path):
-            generator = SyntheticDataGenerator()
-            generator.generate_csv(synth_path, count=sample_size)
-            st.sidebar.success(f"Generated {sample_size} synthetic feedback records!")
+        if gen_button or not os.path.exists(live_path):
+            scraper = LiveReviewScraper()
+            scraper.fetch_and_save_csv(live_path, count=sample_size)
+            st.sidebar.success(f"Fetched {sample_size} real feedback records!")
         
-        target_input = synth_path
+        target_input = live_path
 
     else:
         uploaded_file = st.sidebar.file_uploader("Upload Fashion Reviews CSV", type=["csv"])
@@ -120,10 +120,10 @@ def main():
         st.info("👈 Please select a data source from the sidebar to proceed.")
         return
 
-    if is_synthetic:
+    if is_live_fetch:
         st.markdown(
-            f'<div class="synthetic-banner">🤖 <b>Auto-Generated Data Mode Active:</b> Engine has automatically generated <b>{sample_size}</b> '
-            f'realistic public fashion conversations simulating user feedback from App Store, Google Play, Reddit, YouTube, and Q&A forums.</div>',
+            f'<div class="live-banner">🌐 <b>Live Data Mode Active:</b> Engine has dynamically scraped <b>{sample_size}</b> '
+            f'authentic, real-world customer reviews directly from the Google Play Store.</div>',
             unsafe_allow_html=True
         )
 

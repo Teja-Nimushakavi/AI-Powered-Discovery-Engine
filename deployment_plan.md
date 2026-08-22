@@ -14,7 +14,7 @@ Railway provides a seamless deployment experience for Python FastAPI application
 1. **New Project**: Go to the Railway dashboard and click **New Project** $\rightarrow$ **Deploy from GitHub repo**.
 2. **Select Repository**: Choose your project's repository.
 3. **Configure Build/Start Command**:
-   - Railway will automatically detect the `requirements.txt` file and install the Python dependencies.
+   - **Default Behavior**: On launch, the engine fetches live reviews into `live_playstore_reviews.csv` (or uses existing fetched files) if no custom dataset is provided, ensuring reviewers can evaluate the UI immediately with authentic data.
    - Go to the **Settings** of the newly created service.
    - Under **Deploy**, set the **Start Command** to:
      ```bash
@@ -30,7 +30,7 @@ Railway provides a seamless deployment experience for Python FastAPI application
 5. **Persistent Storage (Crucial)**:
    - Because Railway containers are ephemeral, any SQLite database or ChromaDB files stored in `./data` will be lost when the service restarts or redeploys.
    - Go to the **Volumes** tab for your service in Railway.
-   - Create a new Volume and mount it to `/app/data` (if your working directory is `/app`). Update the `CHROMA_DB_DIR` and `RAW_DB_PATH` environment variables to point to the mounted volume path.
+   - Create a new Volume and mount it to `/app/data` (if your working directory is `/app`). You should include `/app/data/raw/live_multi_source_reviews.csv` - Built dynamically via the `/api/fetch-live-reviews` endpoint. Update the `CHROMA_DB_DIR` and `RAW_DB_PATH` environment variables to point to the mounted volume path.
 6. **Generate Domain**: Go to the **Networking** tab and click **Generate Domain** to get a public URL for your backend (e.g., `https://discovery-backend.up.railway.app`).
 7. **CORS Configuration**: Your FastAPI backend currently has CORS set to `allow_origins=["*"]`, which will safely allow requests from your Vercel frontend. 
 

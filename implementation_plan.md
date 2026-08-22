@@ -49,7 +49,7 @@ flowchart TB
     end
 
     subgraph RESTAPI["FastAPI REST Server (Python)"]
-        Endpoints["POST /api/query-discovery\nPOST /api/generate-synthetic\nPOST /api/analyze-csv"]
+        Endpoints["POST /api/query-discovery\nPOST /api/fetch-live-reviews\nPOST /api/analyze-csv"]
     end
 
     subgraph QueryEngine["Python Comparative Discovery & Persona Engine"]
@@ -68,9 +68,9 @@ flowchart TB
 
 ## Detailed Implementation Phases
 
-### Phase 1: Data Ingestion & Demographic Synthetic Data Generation
+### Phase 1: Data Ingestion & Live Scraper Integration
 - **Schema Validation ([schema_validator.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/ingestion/schema_validator.py)):** Added `age_group`, `city_tier`, and `issue_frequency` optional fields to `InputFeedbackRecord`.
-- **Synthetic Data Generator ([synthetic_generator.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/ingestion/synthetic_generator.py)):** Attached realistic demographic distributions (18-24 Gen Z 38%, 25-34 Millennials 44%; Tier 1 45%, Tier 2 38%, Tier 3+ 17%; 2-3 issues/mo 53%, 4+ issues/mo 25%) to generated CSV feedback records.
+- **Live Review Scraper ([live_scraper.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/ingestion/live_scraper.py)):** Developed a multi-source web scraper to fetch live customer reviews from Google Play Store and App Store dynamically, filtering by language and replacing mock synthetic generation.
 
 ---
 
@@ -82,7 +82,7 @@ flowchart TB
 
 ### Phase 3: Interactive "Ask Me a Question" Discovery Engine
 - **Comparative Query Engine ([query_engine.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/intelligence/query_engine.py)):** Analyzes natural language PM questions, returning comparative opportunity matrices and direct metric insights.
-- **FastAPI Endpoints ([main.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/api/main.py)):** Exposed `POST /api/query-discovery`, `POST /api/generate-synthetic`, and `POST /api/analyze-csv`.
+- **FastAPI Endpoints ([main.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/api/main.py)):** Exposed `POST /api/query-discovery`, `POST /api/fetch-live-reviews`, and `POST /api/analyze-csv`.
 
 ---
 

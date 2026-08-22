@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { Sparkles, Upload, Download, RefreshCw, X, Shield, ShoppingBag, Bell, Settings } from "lucide-react";
 
 interface HeaderProps {
-  dataSource: "synthetic" | "custom";
-  setDataSource: (source: "synthetic" | "custom") => void;
+  dataSource: "live_fetch" | "custom";
+  setDataSource: (source: "live_fetch" | "custom") => void;
   sampleCount: number;
   setSampleCount: (count: number) => void;
   selectedSource: string;
@@ -68,16 +68,16 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="bg-slate-100 p-1 rounded-xl border border-slate-200 flex items-center gap-1 text-xs">
             <button
               onClick={() => {
-                setDataSource("synthetic");
+                setDataSource("live_fetch");
                 onGenerate();
               }}
               className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-                dataSource === "synthetic"
+                dataSource === "live_fetch"
                   ? "bg-white text-slate-900 shadow-sm border border-slate-200"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#ff3f6c]" /> Auto-Generate
+              <Sparkles className="h-3.5 w-3.5 text-[#ff3f6c]" /> Fetch Live Data
             </button>
             <button
               onClick={() => setShowUploadModal(true)}
@@ -103,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Sample Size Controls */}
-          {dataSource === "synthetic" && (
+          {dataSource === "live_fetch" && (
             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
               <select
                 value={selectedSource}
@@ -131,14 +131,14 @@ export const Header: React.FC<HeaderProps> = ({
                 onChange={(e) => setSampleCount(Number(e.target.value))}
                 className="w-20 accent-[#ff3f6c]"
               />
-              <button
-                onClick={onGenerate}
-                disabled={loading}
-                className="p-1 text-slate-600 hover:text-[#ff3f6c] transition-colors"
-                title="Regenerate"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-              </button>
+                <button
+                  onClick={onGenerate}
+                  disabled={loading}
+                  className="px-4 py-2 bg-[#ff3f6c] text-white text-sm font-medium rounded-lg hover:bg-[#e02d56] transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                  {loading ? "Fetching..." : "Fetch Play Store Reviews"}
+                </button>
             </div>
           )}
 

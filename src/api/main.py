@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from src.ingestion.csv_parser import CSVParser
-from src.ingestion.synthetic_generator import SyntheticDataGenerator
+from src.ingestion.live_scraper import LiveReviewScraper
 from src.pipeline.cleaner import DataCleaner
 from src.pipeline.classifier import RelevanceClassifier
 from src.pipeline.extractor import SignalExtractor
@@ -89,21 +89,20 @@ def health_check():
     return {"status": "online", "service": "Myntra Wishlist Discovery Engine API"}
 
 
-@app.post("/api/generate-synthetic", response_model=PMDiscoveryReport)
-def generate_synthetic_and_analyze(
-    count: int = Query(default=500, ge=100, le=1000),
-    source: str = Query(default="all")
+@app.post("/api/fetch-live-reviews", response_model=PMDiscoveryReport)
+def fetch_live_reviews_and_analyze(
+    count: int = Query(default=500, ge=100, le=1000)
 ):
     try:
-        generator = SyntheticDataGenerator()
+        scraper = LiveReviewScraper()
         raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
-        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
-        generator.generate_csv(synth_path, count=count, source=source)
-        return execute_pipeline(synth_path)
+        live_path = os.path.join(os.path.dirname(raw_db_path), "live_playstore_reviews.csv")
+        scraper.fetch_and_save_csv(live_path, count=count)
+        return execute_pipeline(live_path)
     except Exception as e:
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to generate and analyze synthetic data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch and analyze live data: {str(e)}")
 
 
 @app.post("/api/analyze-csv", response_model=PMDiscoveryReport)
@@ -134,12 +133,12 @@ def query_discovery_engine(payload: QueryRequest):
     """
     try:
         raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
-        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
-        if not os.path.exists(synth_path):
-            generator = SyntheticDataGenerator()
-            generator.generate_csv(synth_path, count=payload.sample_count or 500)
+        live_path = os.path.join(os.path.dirname(raw_db_path), "live_playstore_reviews.csv")
+        if not os.path.exists(live_path):
+            scraper = LiveReviewScraper()
+            scraper.fetch_and_save_csv(live_path, count=payload.sample_count or 500)
 
-        report = execute_pipeline(synth_path)
+        report = execute_pipeline(live_path)
 
         query_engine = ComparativeQueryEngine()
         result = query_engine.analyze_query(
