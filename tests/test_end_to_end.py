@@ -79,3 +79,8 @@ def test_end_to_end_discovery_pipeline():
     assert report.relevant_feedback_count == len(relevant)
     assert len(report.top_opportunities) > 0
     assert "LIMITATION NOTICE" in report.data_limitation_notice
+    assert report.persona_analytics is not None
+    assert len(report.persona_analytics.age_distribution) == 4
+    assert len(report.persona_analytics.city_tier_distribution) == 3
+    assert len(report.persona_analytics.issue_frequency_breakdown) == 3
+    assert len(report.persona_analytics.detailed_personas) == 4

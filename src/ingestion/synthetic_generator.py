@@ -91,16 +91,30 @@ class SyntheticDataGenerator:
         "2026-08-06 21:15", "2026-08-05 15:00", "2026-08-04 12:35"
     ]
 
-    def generate_records(self, count: int = 500) -> List[Dict[str, Any]]:
+    AGE_GROUPS = ["18-24 (Gen Z)", "25-34 (Millennial)", "35-44 (Mid-Career)", "45+ (Mature Buyers)"]
+    CITY_TIERS = ["Tier 1 (Metros)", "Tier 2 (Emerging)", "Tier 3+ (Towns)"]
+    ISSUE_FREQUENCIES = ["1 issue/month", "2-3 issues/month", "4+ issues/month"]
+
+    def generate_records(self, count: int = 500, source: str = "all") -> List[Dict[str, Any]]:
         records = []
         for i in range(1, count + 1):
             category = random.choice(self.CATEGORIES)
             brand = random.choice(self.BRANDS)
             item = random.choice(self.ITEMS)
             size = random.choice(self.SIZES)
-            platform = random.choice(self.PLATFORMS)
+            
+            if source != "all" and source in self.PLATFORMS:
+                platform = source
+            else:
+                platform = random.choice(self.PLATFORMS)
+                
             author = random.choice(self.AUTHORS)
             date_str = random.choice(self.DATES)
+
+            # Demographics distributions
+            age_group = random.choices(self.AGE_GROUPS, weights=[0.38, 0.44, 0.13, 0.05])[0]
+            city_tier = random.choices(self.CITY_TIERS, weights=[0.45, 0.38, 0.17])[0]
+            issue_freq = random.choices(self.ISSUE_FREQUENCIES, weights=[0.22, 0.53, 0.25])[0]
 
             # Pick template pool
             rand_val = random.random()
@@ -147,14 +161,20 @@ class SyntheticDataGenerator:
                 "timestamp": date_str,
                 "stars": rating,
                 "category": category,
-                "url": url
+                "url": url,
+                "age_group": age_group,
+                "city_tier": city_tier,
+                "issue_frequency": issue_freq
             })
 
         return records
 
-    def generate_csv(self, output_path: str = "./data/raw/synthetic_fashion_reviews.csv", count: int = 500) -> str:
+    def generate_csv(self, output_path: str = None, count: int = 500, source: str = "all") -> str:
+        if output_path is None:
+            raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
+            output_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        records = self.generate_records(count=count)
+        records = self.generate_records(count=count, source=source)
         df = pd.DataFrame(records)
         df.to_csv(output_path, index=False, encoding="utf-8")
         return output_path

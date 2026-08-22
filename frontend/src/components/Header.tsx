@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Upload, RefreshCw, X, Shield, ShoppingBag, Bell, Settings } from "lucide-react";
+import { Sparkles, Upload, Download, RefreshCw, X, Shield, ShoppingBag, Bell, Settings } from "lucide-react";
 
 interface HeaderProps {
   dataSource: "synthetic" | "custom";
   setDataSource: (source: "synthetic" | "custom") => void;
   sampleCount: number;
   setSampleCount: (count: number) => void;
+  selectedSource: string;
+  setSelectedSource: (source: string) => void;
   onGenerate: () => void;
   onFileUpload: (file: File) => void;
+  onDownloadPdf: () => void;
   loading: boolean;
+  pdfLoading?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,9 +22,13 @@ export const Header: React.FC<HeaderProps> = ({
   setDataSource,
   sampleCount,
   setSampleCount,
+  selectedSource,
+  setSelectedSource,
   onGenerate,
   onFileUpload,
+  onDownloadPdf,
   loading,
+  pdfLoading = false,
 }) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
@@ -81,12 +89,39 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Upload className="h-3.5 w-3.5 text-blue-500" /> Upload CSV
             </button>
+            <div className="w-[1px] h-4 bg-slate-300 mx-1 hidden sm:block"></div>
+            <button
+              onClick={onDownloadPdf}
+              disabled={loading || pdfLoading}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900 ${
+                (loading || pdfLoading) ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <Download className={`h-3.5 w-3.5 text-emerald-500 ${pdfLoading ? 'animate-bounce' : ''}`} /> 
+              {pdfLoading ? "PDF..." : "Download PDF"}
+            </button>
           </div>
 
           {/* Sample Size Controls */}
           {dataSource === "synthetic" && (
             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
-              <span className="text-slate-600 font-medium">Records: {sampleCount}</span>
+              <select
+                value={selectedSource}
+                onChange={(e) => setSelectedSource(e.target.value)}
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#ff3f6c]"
+              >
+                <option value="all">All Sources</option>
+                <option value="app_store">App Store</option>
+                <option value="play_store">Play Store</option>
+                <option value="reddit">Reddit</option>
+                <option value="fashion_community">Fashion Community</option>
+                <option value="social_media">Social Media</option>
+                <option value="youtube">YouTube</option>
+                <option value="product_qna">Product Q&A</option>
+                <option value="public_fashion_web">Public Web</option>
+              </select>
+              <div className="h-4 w-[1px] bg-slate-200 mx-1"></div>
+              <span className="text-slate-600 font-medium ml-1">Records: {sampleCount}</span>
               <input
                 type="range"
                 min="100"

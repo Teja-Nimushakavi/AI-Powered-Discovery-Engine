@@ -39,6 +39,51 @@ export interface UserSegment {
   sample_proportion: number;
 }
 
+export interface AgeGroupDist {
+  age_group: string;
+  percentage: number;
+  count: number;
+  dominant_category: string;
+}
+
+export interface CityTierDist {
+  city_tier: string;
+  percentage: number;
+  count: number;
+  primary_friction: string;
+}
+
+export interface IssueFrequencyDist {
+  frequency_range: string;
+  percentage: number;
+  avg_monthly_issues: number;
+  abandonment_risk: string;
+}
+
+export interface DetailedPersona {
+  persona_id: string;
+  name: string;
+  age_group: string;
+  city_tier: string;
+  issue_frequency: string;
+  archetype: string;
+  primary_friction: string;
+  wishlist_abandonment_rate: string;
+  representative_quote: string;
+  avatar_color: string;
+}
+
+export interface PersonaAnalytics {
+  total_users_profiled: number;
+  avg_issues_per_user_monthly: number;
+  top_affected_demographic: string;
+  top_affected_tier: string;
+  age_distribution: AgeGroupDist[];
+  city_tier_distribution: CityTierDist[];
+  issue_frequency_breakdown: IssueFrequencyDist[];
+  detailed_personas: DetailedPersona[];
+}
+
 export interface UncertaintyMapItem {
   dimension: string;
   user_question: string;
@@ -74,6 +119,7 @@ export interface PMDiscoveryReport {
   };
   uncertainty_map: UncertaintyMapItem[];
   user_segments: UserSegment[];
+  persona_analytics?: PersonaAnalytics;
   top_opportunities: OpportunityCard[];
   unexpected_findings: string[];
   knowledge_gaps: string[];

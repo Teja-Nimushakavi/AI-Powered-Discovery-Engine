@@ -4,13 +4,14 @@
 
 ## 1. System Overview & Architecture Goals
 
-The **AI-Powered Wishlist Purchase Discovery Engine** processes large volumes of unstructured public feedback (reviews, forum posts, social discussions, Q&A) and transforms them into prioritized, evidence-backed customer conversion opportunities for Product Managers (PMs).
+The **AI-Powered Wishlist Purchase Discovery Engine** processes large volumes of unstructured public feedback (reviews, forum posts, social discussions, Q&A) and transforms them into prioritized, evidence-backed customer conversion opportunities and rich **User Persona & Demographic Analytics** for Product Managers (PMs).
 
 ### Key Architectural Goals
-1. **End-to-End Traceability:** Every generated insight, problem, or segment maps directly back to raw source feedback items via immutable unique IDs (`feedback_id`).
-2. **Decoupled 4-Layer Modular Design:** Ingestion, AI Processing, Scoring Intelligence, and PM Dashboard components are decoupled via strict JSON data contracts, allowing seamless scaling from CSV uploads to real-time API streams.
-3. **Determinism & Anti-Hallucination:** Strictly enforced JSON output schemas, confidence scoring, and evidence citation checks eliminate AI hallucinations.
-4. **Hybrid Scalability:** Combines fast vector embeddings (HDBSCAN/Cosine clustering) with high-level LLM reasoning for cost-effective, high-throughput root cause discovery.
+1. **End-to-End Traceability:** Every generated insight, problem, segment, or persona maps directly back to raw source feedback items via immutable unique IDs (`feedback_id`).
+2. **Decoupled 4-Layer Modular Design:** Ingestion, AI Processing, Persona Intelligence & Scoring, and PM Dashboard components are decoupled via strict JSON data contracts.
+3. **Demographic & Persona Analytics:** Dynamically profiles age group distributions (18-24 Gen Z, 25-34 Millennials), city tier breakdowns (Tier 1 Metros, Tier 2, Tier 3+), issue frequencies (monthly friction rate), and target shopper archetypes.
+4. **Determinism & Anti-Hallucination:** Strictly enforced JSON output schemas, confidence scoring, and evidence citation checks eliminate AI hallucinations.
+5. **Hybrid Scalability:** Combines fast vector embeddings (HDBSCAN/Cosine clustering) with high-level LLM reasoning for cost-effective, high-throughput root cause discovery.
 
 ---
 
@@ -21,9 +22,9 @@ flowchart TB
     subgraph L1["1. Data Ingestion & Storage Layer"]
         direction TB
         CSV[CSV Dataset Upload] --> CSV_Parser[CSV Parser & Encoding Normalizer]
-        SYN[Synthetic Data Auto-Generator] --> CSV_Parser
+        SYN[Demographic Synthetic Data Auto-Generator] --> CSV_Parser
         APIs[Future API Streams: Play Store, Reddit, YouTube] -.-> API_Parser[API Connector Module]
-        CSV_Parser --> SchemaVal[Input Schema Validator]
+        CSV_Parser --> SchemaVal[Input Schema Validator - age_group, city_tier, issue_freq]
         API_Parser --> SchemaVal
         SchemaVal --> UUID_Gen[UUID & Metadata Generator]
         UUID_Gen --> RawDB[(Raw Feedback Store - Raw SQLite/Parquet)]
@@ -48,7 +49,7 @@ flowchart TB
     subgraph L3["3. Opportunity Intelligence Layer"]
         direction TB
         RootCause --> QuantEngine[Quantitative Metrics Engine]
-        QuantEngine --> SegEngine[User Segment Mapping Engine]
+        QuantEngine --> SegEngine[User Segment & Persona Analytics Engine]
         SegEngine --> Scorer[Opportunity Priority Scorer - OPS Math]
         Scorer --> GuardFilter[Discount & Anti-Bias Filter Gate]
         GuardFilter --> ReportGen[PM Opportunity Report Generator]
@@ -60,8 +61,9 @@ flowchart TB
         KnowledgeStore --> Dashboard[PM Analytics Dashboard]
         Dashboard --> ExecutiveView[1. Executive Summary & KPIs]
         Dashboard --> MatrixView[2. Opportunity Priority Matrix]
-        Dashboard --> EvidenceView[3. Traceable Evidence Explorer]
-        Dashboard --> GapView[4. Knowledge Gaps & Validation Actions]
+        Dashboard --> PersonaView[3. User Demographics & Persona Profiles]
+        Dashboard --> EvidenceView[4. Traceable Evidence Explorer]
+        Dashboard --> GapView[5. Knowledge Gaps & Validation Actions]
     end
 
     L1 --> L2 --> L3 --> L4
@@ -74,7 +76,7 @@ flowchart TB
 ```mermaid
 flowchart LR
     subgraph Step1["Stage 1: Raw Ingestion"]
-        RawText["Raw Customer Comment"]
+        RawText["Raw Customer Comment + Demographics"]
         RawText --> |UUID & Timestamp| RawRec["Raw Record Object"]
     end
 
@@ -93,8 +95,9 @@ flowchart LR
         VectorCluster --> |Prompt Chain| ProblemNode["Structured Problem Node\n(Observation -> Friction -> Need)"]
     end
 
-    subgraph Step5["Stage 5: Scoring & Output"]
-        ProblemNode --> |OPS Calculation| OppCard["Prioritized Opportunity Card\n(OPS Score + Citations)"]
+    subgraph Step5["Stage 5: Persona Analytics & Scoring"]
+        ProblemNode --> |Segment & Demographics Mapper| PersonaData["Age / Tier / Frequency & Archetype Profiles"]
+        PersonaData --> |OPS Calculation| OppCard["Prioritized Opportunity Card\n(OPS Score + Citations)"]
     end
 
     Step1 --> Step2 --> Step3 --> Step4 --> Step5
@@ -118,7 +121,10 @@ flowchart LR
     "timestamp": { "type": "string", "format": "date-time" },
     "rating": { "type": ["number", "null"] },
     "product_category": { "type": ["string", "null"] },
-    "url": { "type": ["string", "null"] }
+    "url": { "type": ["string", "null"] },
+    "age_group": { "type": ["string", "null"], "default": "25-34" },
+    "city_tier": { "type": ["string", "null"], "default": "Tier 1" },
+    "issue_frequency": { "type": ["string", "null"], "default": "2-3 issues/month" }
   },
   "required": ["feedback_id", "source_platform", "raw_text", "timestamp"]
 }
@@ -137,11 +143,51 @@ flowchart LR
 }
 ```
 
+### 4.3 Data Contract: Persona Analytics & Demographic Schema
+```json
+{
+  "total_users_profiled": 500,
+  "avg_issues_per_user_monthly": 2.9,
+  "top_affected_demographic": "25-34 (Millennials, 44%)",
+  "top_affected_tier": "Tier 1 Metros (45%) & Tier 2 Cities (38%)",
+  "age_distribution": [
+    { "age_group": "25-34 (Millennial)", "percentage": 44.0, "count": 220, "dominant_category": "Ethnic & Western Dresses" },
+    { "age_group": "18-24 (Gen Z)", "percentage": 38.0, "count": 190, "dominant_category": "Topwear & Denim" },
+    { "age_group": "35-44 (Mid-Career)", "percentage": 13.0, "count": 65, "dominant_category": "Workwear & Outerwear" },
+    { "age_group": "45+ (Mature Buyers)", "percentage": 5.0, "count": 25, "dominant_category": "Sarees & Footwear" }
+  ],
+  "city_tier_distribution": [
+    { "city_tier": "Tier 1 (Metros)", "percentage": 45.0, "count": 225, "primary_friction": "Cross-brand size variance" },
+    { "city_tier": "Tier 2 (Emerging Cities)", "percentage": 38.0, "count": 190, "primary_friction": "Return friction & fabric doubt" },
+    { "city_tier": "Tier 3+ (Towns & Regions)", "percentage": 17.0, "count": 85, "primary_friction": "Fabric wash durability & review mistrust" }
+  ],
+  "issue_frequency_breakdown": [
+    { "frequency_range": "2-3 issues / month", "percentage": 53.0, "avg_monthly_issues": 2.6, "abandonment_risk": "High Risk (65% drop-off)" },
+    { "frequency_range": "4+ issues / month (Chronic)", "percentage": 25.0, "avg_monthly_issues": 4.8, "abandonment_risk": "Severe Risk (82% drop-off)" },
+    { "frequency_range": "1 issue / month (Occasional)", "percentage": 22.0, "avg_monthly_issues": 1.0, "abandonment_risk": "Moderate Risk (38% drop-off)" }
+  ],
+  "detailed_personas": [
+    {
+      "persona_id": "PER-01",
+      "name": "Sneha Rao",
+      "age_group": "18-24 (Gen Z)",
+      "city_tier": "Tier 1 (Bengaluru)",
+      "issue_frequency": "3.4 issues / month",
+      "archetype": "Trend-Conscious Fast-Fashion Explorer",
+      "primary_friction": "Cross-brand size inconsistency & studio photo color variance",
+      "wishlist_abandonment_rate": "68%",
+      "representative_quote": "I saved 5 denim jackets from 3 brands in my wishlist, but size M is tight in Mango and loose in Roadster...",
+      "avatar_color": "#ff3f6c"
+    }
+  ]
+}
+```
+
 ---
 
 ## 5. Opportunity Scoring Architecture & Mathematical Engine
 
-The **Opportunity Priority Score (OPS)** ranks discovered problems based on business value and conversion relevance rather than simple frequency:
+The **Opportunity Priority Score (OPS)** ranks discovered problems based on business value and conversion relevance:
 
 $$\text{Opportunity Priority Score (OPS)} = F \times I \times CR \times EC$$
 
@@ -191,11 +237,11 @@ sequenceDiagram
     participant Layer3 as Opportunity Intelligence Engine
     participant DB as Knowledge Store
 
-    PM->>UI: Upload CSV Dataset
-    UI->>Layer1: POST /api/ingest (CSV Stream)
-    Layer1->>Layer1: Parse CSV, Validate Schemas & Generate UUIDs
+    PM->>UI: Upload CSV Dataset / Generate Synthetic
+    UI->>Layer1: POST /api/generate-synthetic or POST /api/analyze-csv
+    Layer1->>Layer1: Parse CSV, Validate Schemas & Generate UUIDs + Demographics
     Layer1->>DB: Save Raw Records (Raw Feedback Store)
-    Layer1->>Layer2: Trigger Analysis Job (batch_id)
+    Layer1->>Layer2: Trigger Analysis Job
     
     rect rgb(240, 248, 255)
         note over Layer2: AI Processing Pipeline Execution
@@ -209,16 +255,16 @@ sequenceDiagram
     Layer2->>Layer3: Pass Problem Nodes & Supporting Evidence
     
     rect rgb(255, 245, 238)
-        note over Layer3: Intelligence & Scoring Synthesis
-        Layer3->>Layer3: Compute Quant Metrics & Segment Mapping
+        note over Layer3: Intelligence, Demographics & Scoring Synthesis
+        Layer3->>Layer3: Compute Age, City Tier & Frequency Persona Analytics
         Layer3->>Layer3: Execute OPS Mathematical Calculation
         Layer3->>Layer3: Enforce Discount & Anti-Hallucination Guardrails
         Layer3->>Layer3: Format PM-Ready Opportunity Report
     end
 
-    Layer3->>DB: Save Prioritized Opportunities & Citation Map
+    Layer3->>DB: Save Prioritized Opportunities & Persona Analytics
     DB-->>UI: Return Final Discovery Report JSON
-    UI-->>PM: Render Interactive Dashboard & Opportunity Matrix
+    UI-->>PM: Render Interactive Dashboard & User Persona Cards
 ```
 
 ---
@@ -231,14 +277,17 @@ erDiagram
     CLEANED_SIGNAL }|--|| VECTOR_CLUSTER : "embedded into"
     VECTOR_CLUSTER ||--|| PROBLEM_NODE : "synthesized into"
     PROBLEM_NODE ||--|| OPPORTUNITY_CARD : "scored into"
+    OPPORTUNITY_CARD ||--o{ PERSONA_ANALYTICS : "mapped to"
     OPPORTUNITY_CARD ||--o{ EVIDENCE_CITATION : "cites"
-    OPPORTUNITY_CARD ||--o{ RESEARCH_ACTION : "recommends"
 
     RAW_FEEDBACK {
         uuid feedback_id PK
         string source_platform
         string raw_text
         string author_id
+        string age_group
+        string city_tier
+        string issue_frequency
         datetime timestamp
     }
 
@@ -267,6 +316,16 @@ erDiagram
         string unmet_need
     }
 
+    PERSONA_ANALYTICS {
+        string top_demographic
+        string top_tier
+        float avg_issues_monthly
+        json age_distribution
+        json city_tier_distribution
+        json issue_frequency_breakdown
+        json detailed_personas
+    }
+
     OPPORTUNITY_CARD {
         uuid opportunity_id PK
         uuid problem_id FK
@@ -283,13 +342,6 @@ erDiagram
         uuid feedback_id FK
         string verbatim_quote
         string source_platform
-    }
-
-    RESEARCH_ACTION {
-        uuid action_id PK
-        uuid opportunity_id FK
-        string methodology
-        string target_metric
     }
 ```
 
@@ -335,38 +387,26 @@ flowchart TD
 ```mermaid
 block-beta
 columns 3
-    Header["PM Discovery Engine Header | Dataset: Fashion_Reviews_2026.csv | Total Records: 10,450"]:3
-    KPI1["Total Analyzed: 10,450"] KPI2["Wishlist Relevant: 4,120 (39.4%)"] KPI3["Discovered Opportunities: 5"]
+    Header["PM Discovery Engine Header | Dataset: Synthetic_Fashion_Reviews.csv | Total Records: 500"]:3
+    KPI1["Total Analyzed: 500"] KPI2["Wishlist Relevant: 215 (43.0%)"] KPI3["Discovered Opportunities: 5"]
     
-    Matrix["Opportunity Priority Matrix\n(Plotting Impact vs. Conversion Relevance)"]:2 Segments["Discovered User Segments\n- Fit-Conscious (42%)\n- Occasion Driven (28%)\n- Comparison (18%)\n- Exploratory (12%)"]:1
+    Matrix["Opportunity Priority Matrix\n(Plotting Impact vs. Conversion Relevance)"]:2 Demographics["User Persona Analytics\n- Age: 25-34 (44%), 18-24 (38%)\n- Tier: Tier 1 (45%), Tier 2 (38%)\n- Freq: 2-3 issues/mo (53%)"]:1
     
-    OppList["Prioritized Opportunity Cards\n#1 Fit Predictability (OPS: 48.2)\n#2 Material Quality Trust (OPS: 36.4)\n#3 Real-World Styling Pairings (OPS: 28.1)"]:2 Details["Evidence Explorer Drawer\nSource Quotes & Verbatims linked to #1"]:1
+    OppList["Prioritized Opportunity Cards\n#1 Fit Predictability (OPS: 48.2)\n#2 Material Quality Trust (OPS: 36.4)\n#3 Real-World Styling Pairings (OPS: 28.1)"]:2 Personas["Detailed Persona Profiles\n- Sneha Rao (Gen Z, Tier 1)\n- Ananya Sharma (Millennial, Tier 2)\n- Rahul Mehta (Millennial, Tier 1)\n- Meera Joshi (Mid-Career, Tier 3+)"]:1
     
     Footer["Limitations & Validation Actions: Confirm Fit Predictability via Product Funnel Analytics & A/B Usability Test"]:3
 ```
 
 ---
 
-## 10. Implementation Strategy: MVP vs. Target Architecture
-
-| Feature Dimension | MVP Architecture | Full Target Architecture |
-| :--- | :--- | :--- |
-| **Data Ingestion** | Local CSV File Upload | Multi-channel connectors (Google Play, App Store, Reddit API, YouTube API, Web scrapers) |
-| **Pipeline Trigger** | On-demand manual execution | Scheduled cron & real-time webhook streaming |
-| **Vector Store** | In-Memory / Local ChromaDB | Production Vector DB (Pinecone / Qdrant / PgVector) |
-| **Storage Engine** | SQLite / Local JSON artifacts | PostgreSQL + Redis (Caching Layer) |
-| **Clustering Model** | Local HDBSCAN / Agglomerative | Hierarchical Vector Clustering + Dynamic Topic Modeling |
-| **LLM Engine** | Structured JSON outputs via OpenAI / Gemini APIs | Multi-agent workflow (LangGraph / AutoGen framework) |
-| **User Interface** | Single-page Interactive Dashboard | Enterprise Multi-tenant Dashboard with Export & Jira Integration |
-
----
-
-## 11. Modular Repository Layout
+## 10. Modular Repository Layout
 
 ```
 graduation-project/
 ├── context.md                    # Core problem context & business domain
 ├── architecture.md               # Complete technical system & diagram specification
+├── implementation_plan.md        # Feature roadmap & implementation phases
+├── walkthrough.md                # System walkthrough & execution guide
 ├── data/
 │   ├── raw/                      # Raw uploaded CSV files
 │   └── processed/                # Normalized & scrubbed datasets
@@ -380,11 +420,24 @@ graduation-project/
 │   │   ├── classifier.py
 │   │   ├── extractor.py
 │   │   └── clusterer.py
-│   ├── intelligence/             # Scoring & Opportunity Synthesis
+│   ├── intelligence/             # Scoring, Persona Analytics & Opportunity Synthesis
 │   │   ├── root_cause.py
+│   │   ├── segment_mapper.py
 │   │   ├── scorer.py
 │   │   └── report_generator.py
-│   └── dashboard/                # PM Dashboard Interface
+│   └── dashboard/                # Streamlit PM Dashboard Interface
 │       └── app.py
+├── frontend/                     # Next.js 14 Premium UI Dashboard App
+│   ├── package.json
+│   └── src/
+│       ├── app/
+│       │   └── page.tsx
+│       ├── components/
+│       │   ├── Header.tsx
+│       │   ├── UserSegments.tsx
+│       │   ├── KPICards.tsx
+│       │   └── ...
+│       └── types/
+│           └── index.ts
 └── tests/                        # Automated unit & integration tests
 ```

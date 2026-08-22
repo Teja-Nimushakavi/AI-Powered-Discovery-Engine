@@ -90,11 +90,15 @@ def health_check():
 
 
 @app.post("/api/generate-synthetic", response_model=PMDiscoveryReport)
-def generate_synthetic_and_analyze(count: int = Query(default=500, ge=100, le=1000)):
+def generate_synthetic_and_analyze(
+    count: int = Query(default=500, ge=100, le=1000),
+    source: str = Query(default="all")
+):
     try:
         generator = SyntheticDataGenerator()
-        synth_path = "./data/raw/synthetic_fashion_reviews.csv"
-        generator.generate_csv(synth_path, count=count)
+        raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
+        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
+        generator.generate_csv(synth_path, count=count, source=source)
         return execute_pipeline(synth_path)
     except Exception as e:
         import traceback
@@ -129,7 +133,8 @@ def query_discovery_engine(payload: QueryRequest):
     Executes deep discovery query analyzing causes, quantifying metrics, and comparing opportunity areas.
     """
     try:
-        synth_path = "./data/raw/synthetic_fashion_reviews.csv"
+        raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
+        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
         if not os.path.exists(synth_path):
             generator = SyntheticDataGenerator()
             generator.generate_csv(synth_path, count=payload.sample_count or 500)

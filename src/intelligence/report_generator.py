@@ -1,7 +1,7 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
 from src.intelligence.scorer import OpportunityCard
-from src.intelligence.segment_mapper import UserSegment
+from src.intelligence.segment_mapper import UserSegment, SegmentMapper, PersonaAnalytics
 from src.intelligence.guardrails import PipelineGuardrails
 
 
@@ -16,6 +16,7 @@ class PMDiscoveryReport(BaseModel):
     purchase_barriers: Dict[str, Any]
     uncertainty_map: List[Dict[str, Any]]
     user_segments: List[UserSegment]
+    persona_analytics: Optional[PersonaAnalytics] = None
     top_opportunities: List[OpportunityCard]
     unexpected_findings: List[str]
     knowledge_gaps: List[str]
@@ -93,6 +94,10 @@ class ReportGenerator:
             {"action": "Unfiltered Customer Photo Gallery", "method": "Test customer photo reviews directly inside wishlist view cards."}
         ]
 
+        # Generate persona analytics
+        mapper = SegmentMapper()
+        persona_analytics = mapper.generate_persona_analytics(total_ingested)
+
         return PMDiscoveryReport(
             report_title="PM Discovery Report: Wishlist-to-Purchase Conversion Engine",
             generated_at=datetime.utcnow().isoformat(),
@@ -104,6 +109,7 @@ class ReportGenerator:
             purchase_barriers=purchase_barriers,
             uncertainty_map=uncertainty_map,
             user_segments=user_segments,
+            persona_analytics=persona_analytics,
             top_opportunities=filtered_cards,
             unexpected_findings=unexpected_findings,
             knowledge_gaps=knowledge_gaps,

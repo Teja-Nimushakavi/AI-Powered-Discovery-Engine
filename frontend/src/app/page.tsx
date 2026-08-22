@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { Header } from "@/components/Header";
 import { KPICards } from "@/components/KPICards";
 import { ExecutiveSummary } from "@/components/ExecutiveSummary";
@@ -14,23 +16,25 @@ import { KnowledgeGaps } from "@/components/KnowledgeGaps";
 import { PMDiscoveryReport, OpportunityCard, ComparativeDiscoveryResponse } from "@/types";
 import { Sparkles, AlertCircle } from "lucide-react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function DashboardPage() {
   const [dataSource, setDataSource] = useState<"synthetic" | "custom">("synthetic");
   const [sampleCount, setSampleCount] = useState<number>(500);
+  const [selectedSource, setSelectedSource] = useState<string>("all");
   const [report, setReport] = useState<PMDiscoveryReport | null>(null);
   const [queryResponse, setQueryResponse] = useState<ComparativeDiscoveryResponse | null>(null);
   const [selectedOpportunity, setSelectedOpportunity] = useState<OpportunityCard | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [queryLoading, setQueryLoading] = useState<boolean>(false);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSyntheticReport = async (count: number = sampleCount) => {
+  const fetchSyntheticReport = async (count: number = sampleCount, source: string = selectedSource) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/generate-synthetic?count=${count}`, {
+      const res = await fetch(`${API_BASE}/api/generate-synthetic?count=${count}&source=${source}`, {
         method: "POST",
       });
 
@@ -97,6 +101,52 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDownloadPdf = async () => {
+    const element = document.getElementById("dashboard-content");
+    if (!element) return;
+    
+    setPdfLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      let heightLeft = pdfHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+      
+      while (heightLeft >= 0) {
+        position = heightLeft - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+      }
+      
+      pdf.save("Myntra-Discovery-Report.pdf");
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      setError("Failed to generate PDF. Please try again.");
+    } finally {
+      setPdfLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSyntheticReport(500);
   }, []);
@@ -109,13 +159,17 @@ export default function DashboardPage() {
         setDataSource={setDataSource}
         sampleCount={sampleCount}
         setSampleCount={setSampleCount}
-        onGenerate={() => fetchSyntheticReport(sampleCount)}
+        selectedSource={selectedSource}
+        setSelectedSource={setSelectedSource}
+        onGenerate={() => fetchSyntheticReport(sampleCount, selectedSource)}
         onFileUpload={handleFileUpload}
+        onDownloadPdf={handleDownloadPdf}
         loading={loading}
+        pdfLoading={pdfLoading}
       />
 
       {/* Main Body */}
-      <main className="flex-1 max-w-[1440px] w-full mx-auto p-6 space-y-6">
+      <main id="dashboard-content" className="flex-1 max-w-[1440px] w-full mx-auto p-6 space-y-6">
         {/* Loading Spinner */}
         {loading && (
           <div className="py-20 flex flex-col items-center justify-center space-y-4">
@@ -134,7 +188,7 @@ export default function DashboardPage() {
               <span>{error}</span>
             </div>
             <button
-              onClick={() => fetchSyntheticReport(sampleCount)}
+              onClick={() => fetchSyntheticReport(sampleCount, selectedSource)}
               className="px-3 py-1 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors"
             >
               Retry Connection
@@ -191,10 +245,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* User Segments & Pre-Purchase Uncertainty */}
+            {/* User Segments, Demographics & Pre-Purchase Uncertainty */}
             <UserSegments
               segments={report.user_segments}
               uncertainties={report.uncertainty_map}
+              personaAnalytics={report.persona_analytics}
             />
 
             {/* Knowledge Gaps & Validation Actions */}

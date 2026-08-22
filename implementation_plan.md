@@ -1,20 +1,18 @@
-# Implementation Plan: Interactive PM Discovery Engine with 'Ask Me a Question' Query Intelligence
+# Implementation Plan: AI-Powered Wishlist Purchase Discovery Engine
 
-Updating the **AI-Powered Wishlist Purchase Discovery Engine** to match the exact visual design specification from Stitch ([`screen.png`](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/stitch_myntra_wishlist_discovery_engine/screen.png) and [`DESIGN.md`](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/stitch_myntra_wishlist_discovery_engine/DESIGN.md)) and introducing the **Interactive "Ask Me a Question" Discovery Query Engine**.
+Implementation roadmap and execution plan for the **AI-Powered Wishlist Purchase Discovery Engine**, featuring the **Interactive "Ask Me a Question" Discovery Query Engine** and **User Persona & Demographic Analytics**.
 
 ---
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **New Feature: "Ask Me a Question" Interactive Discovery Engine**:
-> Product Managers can ask any natural language question regarding wishlist drop-offs (e.g., *"What causes users to postpone a purchase?"*, *"Why do fit-conscious shoppers abandon wishlists?"*).
-> 
-> **Beyond Summarization & Sentiment**: The engine goes beyond basic summaries or positive/negative sentiment analysis. It dynamically **identifies**, **quantifies**, and **compares** competing opportunity areas affecting the 30-day wishlist purchase conversion metric.
+> **User Persona & Demographic Analytics Integration**:
+> Tracks age group distributions (18-24 Gen Z, 25-34 Millennials, 35-44, 45+), city tier breakdowns (Tier 1 Metros, Tier 2, Tier 3+), issue frequencies (monthly friction rate), and target shopper archetypes across both the Next.js and Streamlit PM dashboards.
 
 > [!TIP]
-> **Visual Alignment (`screen.png` & `DESIGN.md`)**:
-> Includes the exact header layout, top notification & profile icons, glowing wave sparklines on metric cards, 3-tier opportunity cards (`Tier 1 OPS: 48.2`, `Tier 2 OPS: 32.5`, `Tier 3 OPS: 18.9`), and clean 1440px desktop grid.
+> **Interactive "Ask Me a Question" Engine**:
+> Product Managers can ask natural language questions regarding wishlist drop-offs (e.g., *"What causes users to postpone a purchase?"*, *"Why do fit-conscious shoppers abandon wishlists?"*), receiving quantitative comparative matrices and metric-linked direct answers.
 
 ---
 
@@ -40,6 +38,13 @@ flowchart TB
             OppCards[Tier-coded Opportunity Cards]
         end
         
+        subgraph DemographicsView["User Persona & Demographics View"]
+            AgeDist[Age Group Distribution: 18-24 Gen Z, 25-34 Millennials]
+            TierDist[City Tier Distribution: Tier 1 Metros vs Tier 2 vs Tier 3+]
+            FreqDist[Issue Frequency Metrics & Abandonment Risk]
+            PersonaCards[Interactive User Persona Archetype Cards]
+        end
+
         Drawer[Slide-over Verbatim Evidence Explorer]
     end
 
@@ -47,9 +52,9 @@ flowchart TB
         Endpoints["POST /api/query-discovery\nPOST /api/generate-synthetic\nPOST /api/analyze-csv"]
     end
 
-    subgraph QueryEngine["Python Comparative Discovery Engine"]
+    subgraph QueryEngine["Python Comparative Discovery & Persona Engine"]
         QueryClassifier[Natural Language Intent Classifier]
-        SignalFilter[Relevant Feedback Sub-Segment Filtering]
+        PersonaMapper[User Segment & Demographic Persona Engine]
         QuantAnalyzer[Quantitative Metric & OPS Opportunity Scorer]
         ComparativeSynthesizer[Comparative Opportunity Matrix Generator]
         CitationMatcher[Traceable Evidence Citation Matcher]
@@ -63,66 +68,35 @@ flowchart TB
 
 ## Detailed Implementation Phases
 
-### Phase 1: Comparative Query Engine in Backend (`src/intelligence/query_engine.py` & `src/api/main.py`)
-
-#### [NEW] [query_engine.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/intelligence/query_engine.py)
-- Evaluates PM questions (e.g. *"What causes users to postpone a purchase?"*).
-- Filters relevant signals into sub-themes (e.g., *Fit Uncertainty*, *Fabric Doubt*, *Occasion Waiting*, *Photo Mismatch*).
-- Computes quantitative metrics for each theme:
-  - Mentions & % Share of Query Context
-  - Assessed Customer Friction Impact (1-10)
-  - 30-Day Conversion Relevance Factor (0.1 - 1.0)
-  - Opportunity Priority Score ($\text{OPS} = F \times I \times CR \times EC$)
-- Generates a **Comparative Opportunity Analysis**:
-  - `query`: Original question asked by PM
-  - `direct_answer`: Quantitative summary connecting friction to the 30-day conversion metric
-  - `comparative_matrix`: Array comparing identified opportunity areas side-by-side
-  - `top_opportunities`: Filtered opportunity cards
-  - `evidence_citations`: Traceable customer verbatims with `feedback_id` tags
-
-#### [MODIFY] [main.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/api/main.py)
-- Expose `POST /api/query-discovery` endpoint accepting `{ "query": "What causes users to postpone a purchase?", "sample_count": 500 }`.
+### Phase 1: Data Ingestion & Demographic Synthetic Data Generation
+- **Schema Validation ([schema_validator.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/ingestion/schema_validator.py)):** Added `age_group`, `city_tier`, and `issue_frequency` optional fields to `InputFeedbackRecord`.
+- **Synthetic Data Generator ([synthetic_generator.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/ingestion/synthetic_generator.py)):** Attached realistic demographic distributions (18-24 Gen Z 38%, 25-34 Millennials 44%; Tier 1 45%, Tier 2 38%, Tier 3+ 17%; 2-3 issues/mo 53%, 4+ issues/mo 25%) to generated CSV feedback records.
 
 ---
 
-### Phase 2: "Ask Me a Question" UI Component (`frontend/src/components/QueryBar.tsx`)
-
-#### [NEW] `QueryBar.tsx`
-- Search bar with pink search button and quick preset chips:
-  - 🔍 *"What causes users to postpone a purchase?"*
-  - 📏 *"Why do fit-conscious shoppers abandon wishlists?"*
-  - 🧵 *"What information gaps exist for fabric quality?"*
-  - 👗 *"Where do users drop off between wishlist and checkout?"*
-- Displays loading state and triggers query analysis via `POST /api/query-discovery`.
+### Phase 2: User Persona & Demographic Analytics Engine
+- **Segment & Persona Mapper ([segment_mapper.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/intelligence/segment_mapper.py)):** Created `AgeGroupDist`, `CityTierDist`, `IssueFrequencyDist`, `DetailedPersona`, and `PersonaAnalytics` Pydantic models.
+- **Report Generator ([report_generator.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/intelligence/report_generator.py)):** Integrated `persona_analytics` into `PMDiscoveryReport`.
 
 ---
 
-### Phase 3: Comparative Opportunity Analysis View (`frontend/src/components/ComparativeAnalysisView.tsx`)
-
-#### [NEW] `ComparativeAnalysisView.tsx`
-- Renders the quantitative query result:
-  - **1. Direct Analytical Answer**: Explaining exact drop-off reasons and metric impacts.
-  - **2. Comparative Opportunity Matrix Table**: Side-by-side comparison of opportunity areas showing:
-    - Opportunity Name
-    - Mention Volume & %
-    - Friction Impact (1-10)
-    - Conversion Relevance (0.1 - 1.0)
-    - Opportunity Priority Score (OPS)
-    - Primary Affected Segment
-  - **3. Business Goal Impact**: Linking friction directly to 30-day wishlist conversion rate lift.
+### Phase 3: Interactive "Ask Me a Question" Discovery Engine
+- **Comparative Query Engine ([query_engine.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/intelligence/query_engine.py)):** Analyzes natural language PM questions, returning comparative opportunity matrices and direct metric insights.
+- **FastAPI Endpoints ([main.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/api/main.py)):** Exposed `POST /api/query-discovery`, `POST /api/generate-synthetic`, and `POST /api/analyze-csv`.
 
 ---
 
-### Phase 4: Visual Design Alignment with `screen.png` & `DESIGN.md`
-
-- Update `KPICards.tsx` to match the exact wave sparklines (Blue, Green, Pink, Gold) shown in [`screen.png`](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/stitch_myntra_wishlist_discovery_engine/screen.png).
-- Update `OpportunityList.tsx` to match `Tier 1 (OPS: 48.2)`, `Tier 2 (OPS: 32.5)`, and `Tier 3 (OPS: 18.9)` styling.
-- Add footer: *"© 2024 Myntra Product Discovery Engine. Limited to internal strategic use only."*
+### Phase 4: Next.js 14 Premium UI Dashboard
+- **Types Definition ([types/index.ts](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/frontend/src/types/index.ts)):** Defined TypeScript interfaces for `PersonaAnalytics`, `AgeGroupDist`, `CityTierDist`, `IssueFrequencyDist`, and `DetailedPersona`.
+- **User Segments & Personas Component ([UserSegments.tsx](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/frontend/src/components/UserSegments.tsx)):** Built visual cards for Age Group distribution, City Tier breakdown, Issue Frequency metrics, and 4 detailed User Persona profile cards.
 
 ---
 
-### Phase 5: Verification & E2E Testing
+### Phase 5: Streamlit PM Analytics Dashboard
+- **Streamlit App ([app.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/src/dashboard/app.py)):** Updated Tab 3 with Age Group DataFrames, City Tier charts, Issue Frequency metrics, and User Persona Profiles.
 
-1. Test query `"What causes users to postpone a purchase?"` via `POST /api/query-discovery` and verify returned comparative matrix.
-2. Test UI query input in Next.js and verify comparative matrix table & quote citations render accurately.
-3. Run test suite (`pytest tests/`).
+---
+
+### Phase 6: Automated Testing & Verification
+- **E2E Integration Test ([test_end_to_end.py](file:///c:/Users/Teja/OneDrive/Desktop/Next%20leap/Graduation%20project/tests/test_end_to_end.py)):** Added unit test assertions verifying `persona_analytics`, age distributions, city tier breakdowns, and persona profiles.
+- Verified test suite (`python -m pytest` - 11/11 tests passed).

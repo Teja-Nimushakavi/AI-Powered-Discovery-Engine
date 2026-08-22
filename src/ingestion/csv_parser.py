@@ -30,7 +30,9 @@ class CSVParser:
         "category": "product_category"
     }
 
-    def __init__(self, raw_db_path: str = "./data/raw/raw_feedback.sqlite"):
+    def __init__(self, raw_db_path: str = None):
+        if raw_db_path is None:
+            raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
         self.raw_db_path = raw_db_path
         os.makedirs(os.path.dirname(self.raw_db_path), exist_ok=True)
         self._init_db()
@@ -89,6 +91,10 @@ class CSVParser:
             author = str(row.get("author_id", "anonymous")) if pd.notna(row.get("author_id")) else "anonymous"
             ts = str(row.get("timestamp", "")) if pd.notna(row.get("timestamp")) else ""
             cat = str(row.get("product_category", "fashion")) if pd.notna(row.get("product_category")) else "fashion"
+            url_val = str(row.get("url", "")) if pd.notna(row.get("url")) else ""
+            age_group_val = str(row.get("age_group", "25-34")) if pd.notna(row.get("age_group")) else "25-34"
+            city_tier_val = str(row.get("city_tier", "Tier 1")) if pd.notna(row.get("city_tier")) else "Tier 1"
+            issue_freq_val = str(row.get("issue_frequency", "2-3 issues/month")) if pd.notna(row.get("issue_frequency")) else "2-3 issues/month"
             
             rating_val = None
             if "rating" in row and pd.notna(row["rating"]):
@@ -103,10 +109,15 @@ class CSVParser:
                     "source_platform": source,
                     "author_id": author,
                     "product_category": cat,
-                    "rating": rating_val
+                    "rating": rating_val,
+                    "age_group": age_group_val,
+                    "city_tier": city_tier_val,
+                    "issue_frequency": issue_freq_val
                 }
                 if ts.strip():
                     record_kwargs["timestamp"] = ts.strip()
+                if url_val.strip():
+                    record_kwargs["url"] = url_val.strip()
 
                 record = InputFeedbackRecord(**record_kwargs)
                 records.append(record)

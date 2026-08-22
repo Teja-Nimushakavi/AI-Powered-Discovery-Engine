@@ -28,6 +28,7 @@ st.markdown("""
     .sub-header { font-size: 1.1rem; color: #535766; margin-bottom: 1.5rem; }
     .metric-card { background: #f5f5f6; padding: 1rem; border-radius: 8px; border-left: 4px solid #ff3f6c; }
     .synthetic-banner { background: #fff0f3; padding: 0.8rem 1.2rem; border-radius: 8px; border: 1px solid #ff3f6c; color: #d32f2f; margin-bottom: 1rem; }
+    .persona-card { background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #e0e0e0; margin-bottom: 1rem; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -100,7 +101,8 @@ def main():
         sample_size = st.sidebar.slider("Number of Feedback Conversations to Generate:", min_value=100, max_value=1000, value=500, step=100)
         gen_button = st.sidebar.button("🔄 Regenerate Synthetic Data", use_container_width=True)
         
-        synth_path = "./data/raw/synthetic_fashion_reviews.csv"
+        raw_db_path = os.environ.get("RAW_DB_PATH", "./data/raw/raw_feedback.sqlite")
+        synth_path = os.path.join(os.path.dirname(raw_db_path), "synthetic_fashion_reviews.csv")
         
         if gen_button or not os.path.exists(synth_path):
             generator = SyntheticDataGenerator()
@@ -144,7 +146,7 @@ def main():
     tab1, tab2, tab3, tab4 = st.tabs([
         "🎯 Prioritized Opportunity Matrix",
         "🔍 Traceable Evidence Explorer",
-        "👥 User Segments & Uncertainty Map",
+        "👥 User Personas & Demographics",
         "💡 Knowledge Gaps & Validation Actions"
     ])
 
@@ -196,8 +198,53 @@ def main():
             st.markdown("---")
 
     with tab3:
-        st.subheader("Discovered User Segments & Pre-Purchase Uncertainty Map")
+        st.subheader("👥 User Demographics, Personas & Pre-Purchase Uncertainty")
 
+        if report.persona_analytics:
+            st.markdown("### 📊 Demographics & Friction Frequency Breakdown")
+            d1, d2, d3 = st.columns(3)
+
+            with d1:
+                st.markdown("#### 📅 Age Group Distribution")
+                df_age = pd.DataFrame([
+                    {"Age Group": a.age_group, "Percentage (%)": a.percentage, "Dominant Category": a.dominant_category}
+                    for a in report.persona_analytics.age_distribution
+                ])
+                st.dataframe(df_age, use_container_width=True, hide_index=True)
+
+            with d2:
+                st.markdown("#### 🏙️ City Tier Breakdown")
+                df_tier = pd.DataFrame([
+                    {"City Tier": c.city_tier, "Percentage (%)": c.percentage, "Primary Friction": c.primary_friction}
+                    for c in report.persona_analytics.city_tier_distribution
+                ])
+                st.dataframe(df_tier, use_container_width=True, hide_index=True)
+
+            with d3:
+                st.markdown("#### 🔄 Issue Frequency & Friction Rate")
+                df_freq = pd.DataFrame([
+                    {"Frequency Range": f.frequency_range, "Percentage (%)": f.percentage, "Abandonment Risk": f.abandonment_risk}
+                    for f in report.persona_analytics.issue_frequency_breakdown
+                ])
+                st.dataframe(df_freq, use_container_width=True, hide_index=True)
+
+            st.markdown("---")
+            st.markdown("### 👤 Detailed User Persona Profiles")
+            p_cols = st.columns(2)
+            for idx, persona in enumerate(report.persona_analytics.detailed_personas):
+                col = p_cols[idx % 2]
+                with col:
+                    with st.container():
+                        st.markdown(
+                            f"#### 🧑 **{persona.name}** ({persona.archetype})\n"
+                            f"- **Age Group:** `{persona.age_group}` | **Location:** `{persona.city_tier}`\n"
+                            f"- **Issue Frequency:** `{persona.issue_frequency}` | **Wishlist Abandonment:** `{persona.wishlist_abandonment_rate}`\n"
+                            f"- **Primary Friction:** {persona.primary_friction}\n"
+                            f"> *\"{persona.representative_quote}\"*"
+                        )
+                        st.markdown("---")
+
+        st.markdown("---")
         c1, c2 = st.columns(2)
         with c1:
             st.markdown("### Discovered User Segments")

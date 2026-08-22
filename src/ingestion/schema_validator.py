@@ -16,6 +16,9 @@ class InputFeedbackRecord(BaseModel):
     rating: Optional[float] = Field(default=None)
     product_category: Optional[str] = Field(default="fashion")
     url: Optional[str] = Field(default=None)
+    age_group: Optional[str] = Field(default="25-34")
+    city_tier: Optional[str] = Field(default="Tier 1")
+    issue_frequency: Optional[str] = Field(default="2-3 issues/month")
 
     @field_validator("raw_text")
     @classmethod
